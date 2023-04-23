@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "955799194825",
+    "firebase_url": "https://final-project-6b3e9-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "final-project-6b3e9",
+    "storage_bucket": "final-project-6b3e9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955799194825:android:da2956d65d3c96afe49118",
+        "android_client_info": {
+          "package_name": "com.example.alert"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "955799194825-8bkbktescmro6e80t0433evm6kaa958l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5m75msA1G8HDZ_GETdnacwDQrLfwe94s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "955799194825-8bkbktescmro6e80t0433evm6kaa958l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "955799194825-8n9vruprgrmm507rm4niscj5cgg8l9f8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.finalproject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955799194825:android:2d8da3cc99e7dd79e49118",
+        "android_client_info": {
+          "package_name": "com.example.finalproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "955799194825-8bkbktescmro6e80t0433evm6kaa958l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5m75msA1G8HDZ_GETdnacwDQrLfwe94s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "955799194825-8bkbktescmro6e80t0433evm6kaa958l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "955799194825-8n9vruprgrmm507rm4niscj5cgg8l9f8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.finalproject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
