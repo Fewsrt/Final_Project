@@ -43,6 +43,8 @@ dependencies:
   liquid_progress_indicator: ^0.4.0
   syncfusion_flutter_gauges: ^21.1.41
   shared_preferences: ^2.1.0
+  responsive_table: ^0.2.0+2
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

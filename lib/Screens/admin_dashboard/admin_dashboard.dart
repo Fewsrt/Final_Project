@@ -1,3 +1,4 @@
+import 'package:alert/Screens/history/history.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -200,6 +201,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             Text('Wind Speed: $_windspeed'),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HistoryPage()),
+          );
+        },
+        child: const Icon(Icons.history),
       ),
     );
   }
