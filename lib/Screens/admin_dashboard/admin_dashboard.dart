@@ -1,11 +1,12 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:alert/Screens/admin_dashboard/activityhistory/activityhistory.dart';
 import 'package:alert/Screens/admin_dashboard/dashboard/dashboard.dart';
+import 'package:alert/Screens/admin_dashboard/datahistory/datahistory.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'historydevice/historydevice.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Initialize Firebase
@@ -17,7 +18,8 @@ Future<void> main() async {
 class AdminDashboardPage extends StatefulWidget {
   final String deviceId;
 
-  const AdminDashboardPage({Key? key, required this.deviceId}) : super(key: key);
+  const AdminDashboardPage({Key? key, required this.deviceId})
+      : super(key: key);
 
   @override
   _AdminDashboardPageState createState() => _AdminDashboardPageState();
@@ -35,17 +37,59 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   static List<Widget> _widgetOptions(String deviceId) {
     return <Widget>[
       DashBoardPage(deviceId: deviceId),
-      const HistoryDevicesPage(),
     ];
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 1) {
+      // if "History" item is tapped
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Choose history type'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  ListTile(
+                    title: const Text('Activity history'),
+                    onTap: () {
+                    Future.microtask(() {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ActivityHistoryPage()),
+                      );
+                    });
+                    },
+                  ),
+                  const Divider(), // add a divider between the options
+                  ListTile(
+                    title: const Text('Data history'),
+                    onTap: () {
+                    Future.microtask(() {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const DataHistoryPage()),
+                      );
+                    });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
-    @override
+  @override
   void initState() {
     super.initState();
     getDataFromFirestore();

@@ -1,17 +1,16 @@
 import 'dart:math';
-import 'package:alert/component/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_table/responsive_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class HistoryDevicesPage extends StatefulWidget {
-  const HistoryDevicesPage({Key? key}) : super(key: key);
+class ActivityHistoryPage extends StatefulWidget {
+  const ActivityHistoryPage({Key? key}) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
-  _HistoryDevicesPageState createState() => _HistoryDevicesPageState();
+  _ActivityHistoryPageState createState() => _ActivityHistoryPageState();
 }
 
-class _HistoryDevicesPageState extends State<HistoryDevicesPage> {
+class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
   late List<DatatableHeader> _headers;
 
   final List<int> _perPages = [10, 20, 50, 100];
@@ -187,6 +186,15 @@ class _HistoryDevicesPageState extends State<HistoryDevicesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Activity History'),
+        actions: [
+          IconButton(
+            onPressed: _initializeData,
+            icon: const Icon(Icons.refresh_sharp),
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -196,7 +204,7 @@ class _HistoryDevicesPageState extends State<HistoryDevicesPage> {
               margin: const EdgeInsets.all(10),
               padding: const EdgeInsets.all(0),
               constraints: const BoxConstraints(
-                maxHeight: 700,
+                maxHeight: 750,
               ),
               child: Card(
                 elevation: 1,
@@ -211,9 +219,9 @@ class _HistoryDevicesPageState extends State<HistoryDevicesPage> {
                         decoration: InputDecoration(
                             // ignore: prefer_interpolation_to_compose_strings
                             hintText: 'Enter search ...'
-                                    // ignore: unnecessary_new
-                                    .replaceAll(new RegExp('[\\W_]+'), ' ')
-                                    .toUpperCase(),
+                                // ignore: unnecessary_new
+                                .replaceAll(new RegExp('[\\W_]+'), ' ')
+                                .toUpperCase(),
                             prefixIcon: IconButton(
                                 icon: const Icon(Icons.cancel),
                                 onPressed: () {
