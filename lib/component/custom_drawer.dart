@@ -1,4 +1,5 @@
 import 'package:alert/Screens/card_device/card_device.dart';
+import 'package:alert/Screens/userlist/userlist.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -57,6 +58,19 @@ class CustomDrawer extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => const HistoryPage()),
+                      );
+                    });
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.people),
+                  title: const Text('Users'),
+                  onTap: () {
+                    Future.microtask(() {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const UserListScreen()),
                       );
                     });
                   },
