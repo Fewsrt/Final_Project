@@ -59,7 +59,7 @@ class _CardDeviceState extends State<CardDevicePage> {
       appBar: AppBar(
         title: const Text('Devices'),
       ),
-      drawer: CustomDrawer(),
+      drawer: const CustomDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: StreamBuilder<QuerySnapshot>(

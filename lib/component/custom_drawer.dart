@@ -38,7 +38,7 @@ class CustomDrawer extends StatelessWidget {
                         .doc(uid)
                         .get();
                     Future.microtask(() {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
@@ -53,11 +53,10 @@ class CustomDrawer extends StatelessWidget {
                   title: const Text('History'),
                   onTap: () {
                     Future.microtask(() {
-                      Navigator.pushAndRemoveUntil(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const HistoryPage()),
-                        (route) => false,
                       );
                     });
                   },
