@@ -187,7 +187,7 @@ class _DataHistoryPageState extends State<DataHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Activity'),
+        title: const Text('Data History'),
         actions: [
           IconButton(
             onPressed: _initializeData,
@@ -204,7 +204,7 @@ class _DataHistoryPageState extends State<DataHistoryPage> {
               margin: const EdgeInsets.all(10),
               padding: const EdgeInsets.all(0),
               constraints: const BoxConstraints(
-                maxHeight: 750,
+                maxHeight: 700,
               ),
               child: Card(
                 elevation: 1,

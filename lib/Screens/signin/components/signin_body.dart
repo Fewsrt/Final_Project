@@ -1,9 +1,9 @@
 import 'package:alert/Screens/card_device/card_device.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:alert/Screens/signup/signup.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -17,7 +17,6 @@ class _SignInState extends State<SignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
-  String _role = "";
 
   void _handleSignIn() async {
     if (!_formKey.currentState!.validate()) {
@@ -35,36 +34,20 @@ class _SignInState extends State<SignInPage> {
         password: _passwordController.text,
       );
 
-      _saveUserId(userCredential.user!.uid);
+      await _saveUserRole(userCredential.user!.uid);
 
       setState(() {
         _isLoading = false;
       });
-      var collection = FirebaseFirestore.instance.collection('users');
-      var docSnapshot = await collection.doc(userCredential.user!.uid).get();
-      if (docSnapshot.exists) {
-        Map<String, dynamic>? data = docSnapshot.data();
-        _role = data?['role'];
-      }
-      if (_role == 'admin') {
-        Future.microtask(() {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => CardDevicePage(user: userCredential.user!),
-            ),
-          );
-        });
-      } else {
-        Future.microtask(() {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => CardDevicePage(user: userCredential.user!),
-            ),
-          );
-        });
-      }
+      Future.microtask(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+               const CardDevicePage(),
+          ),
+        );
+      });
     } on FirebaseAuthException catch (e) {
       setState(() {
         _isLoading = false;
@@ -94,11 +77,21 @@ class _SignInState extends State<SignInPage> {
     }
   }
 
-  void _saveUserId(String userId) async {
-    // Save the user ID to shared preferences or secure storage
+  Future<void> _saveUserRole(String userId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentSnapshot userSnapshot =
+        await firestore.collection('users').doc(userId).get();
+    String role = userSnapshot.get('role');
+    String name = userSnapshot.get('name');
+    String email = userSnapshot.get('email');
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userRole', role);
+    prefs.setString('userName', name);
+    prefs.setString('userEmail', email);
     prefs.setString('userId', userId);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +139,6 @@ class _SignInState extends State<SignInPage> {
                         onPressed: _handleSignIn,
                         child: const Text('Sign In'),
                       ),
-                      const SizedBox(height: 12.0),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pushReplacement(

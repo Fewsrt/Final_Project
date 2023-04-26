@@ -204,7 +204,7 @@ class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
               margin: const EdgeInsets.all(10),
               padding: const EdgeInsets.all(0),
               constraints: const BoxConstraints(
-                maxHeight: 750,
+                maxHeight: 700,
               ),
               child: Card(
                 elevation: 1,

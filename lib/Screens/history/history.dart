@@ -206,7 +206,7 @@ class _HistoryPageState extends State<HistoryPage> {
               margin: const EdgeInsets.all(10),
               padding: const EdgeInsets.all(0),
               constraints: const BoxConstraints(
-                maxHeight: 890,
+                maxHeight: 700,
               ),
               child: Card(
                 elevation: 1,

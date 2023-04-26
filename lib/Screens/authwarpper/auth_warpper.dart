@@ -1,8 +1,8 @@
 import 'package:alert/Screens/card_device/card_device.dart';
 import 'package:alert/Screens/signin/signin.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthWrapper extends StatefulWidget {
@@ -38,9 +38,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
           if (snapshot.hasData) {
             User? user = snapshot.data;
             // Save the user's ID to shared preferences or secure storage
-            _saveUserId(user!.uid);
+            _saveUserRole(user!.uid);
             // User is signed in, navigate to home screen
-            return CardDevicePage(user: user);
+            return const CardDevicePage();
           } else {
             // User is not signed in, navigate to sign in screen
             return const SigninScreen();
@@ -50,9 +50,18 @@ class _AuthWrapperState extends State<AuthWrapper> {
     );
   }
 
-  void _saveUserId(String userId) async {
-    // Save the user ID to shared preferences or secure storage
+  Future<void> _saveUserRole(String userId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentSnapshot userSnapshot =
+        await firestore.collection('users').doc(userId).get();
+    String role = userSnapshot.get('role');
+    String name = userSnapshot.get('name');
+    String email = userSnapshot.get('email');
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userRole', role);
+    prefs.setString('userName', name);
+    prefs.setString('userEmail', email);
     prefs.setString('userId', userId);
   }
 }

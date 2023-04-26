@@ -1,8 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:alert/Screens/card_device/card_device.dart';
 import 'package:alert/Screens/signin/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -43,30 +46,17 @@ class _SignUpState extends State<SignUpPage> {
           'role': _role,
         });
 
+        await _saveUserRole(userCredential.user!.uid);
+
         setState(() {
           _isLoading = false;
         });
-
-        // Navigate to the appropriate screen based on the user's role
-        if (_role == 'admin') {
-          Future.microtask(() {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) => CardDevicePage(user: userCredential.user!),
-              ),
-            );
-          });
-        } else {
-          Future.microtask(() {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) => CardDevicePage(user: userCredential.user!),
-              ),
-            );
-          });
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => const CardDevicePage(),
+          ),
+        );
       } on FirebaseAuthException catch (e) {
         setState(() {
           _isLoading = false;
@@ -98,6 +88,21 @@ class _SignUpState extends State<SignUpPage> {
         );
       }
     }
+  }
+
+  Future<void> _saveUserRole(String userId) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentSnapshot userSnapshot =
+        await firestore.collection('users').doc(userId).get();
+    String role = userSnapshot.get('role');
+    String name = userSnapshot.get('name');
+    String email = userSnapshot.get('email');
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('userRole', role);
+    prefs.setString('userName', name);
+    prefs.setString('userEmail', email);
+    prefs.setString('userId', userId);
   }
 
   @override
@@ -154,27 +159,27 @@ class _SignUpState extends State<SignUpPage> {
                     onSaved: (value) => _password = value!,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: DropdownButtonFormField<String>(
-                    value: _role,
-                    decoration: const InputDecoration(
-                      labelText: "Role",
-                      border: OutlineInputBorder(),
-                    ),
-                    items: <String>['user', 'admin']
-                        .map((value) => DropdownMenuItem(
-                              value: value,
-                              child: Text(value),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _role = value!;
-                      });
-                    },
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.all(16.0),
+                //   child: DropdownButtonFormField<String>(
+                //     value: _role,
+                //     decoration: const InputDecoration(
+                //       labelText: "Role",
+                //       border: OutlineInputBorder(),
+                //     ),
+                //     items: <String>['user', 'admin']
+                //         .map((value) => DropdownMenuItem(
+                //               value: value,
+                //               child: Text(value),
+                //             ))
+                //         .toList(),
+                //     onChanged: (value) {
+                //       setState(() {
+                //         _role = value!;
+                //       });
+                //     },
+                //   ),
+                // ),
                 const SizedBox(height: 20),
                 _isLoading
                     ? const CircularProgressIndicator()

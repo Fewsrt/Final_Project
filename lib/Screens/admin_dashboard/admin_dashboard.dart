@@ -5,8 +5,7 @@ import 'package:alert/Screens/admin_dashboard/dashboard/dashboard.dart';
 import 'package:alert/Screens/admin_dashboard/datahistory/datahistory.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Initialize Firebase
@@ -26,13 +25,13 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  DatabaseReference refbutton = FirebaseDatabase.instance.ref("/");
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference devicesCollection =
       FirebaseFirestore.instance.collection('Devices');
   String deviceName = '';
   String uuid = '';
   int _selectedIndex = 0;
+  String _userRole = '';
 
   static List<Widget> _widgetOptions(String deviceId) {
     return <Widget>[
@@ -51,29 +50,31 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  ListTile(
-                    title: const Text('Activity history'),
-                    onTap: () {
-                    Future.microtask(() {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const ActivityHistoryPage()),
-                      );
-                    });
-                    },
-                  ),
+                  if (_userRole == 'admin')
+                    ListTile(
+                      title: const Text('Activity history'),
+                      onTap: () {
+                        Future.microtask(() {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ActivityHistoryPage()),
+                          );
+                        });
+                      },
+                    ),
                   const Divider(), // add a divider between the options
                   ListTile(
                     title: const Text('Data history'),
                     onTap: () {
-                    Future.microtask(() {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DataHistoryPage()),
-                      );
-                    });
+                      Future.microtask(() {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const DataHistoryPage()),
+                        );
+                      });
                     },
                   ),
                 ],
@@ -93,6 +94,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   void initState() {
     super.initState();
     getDataFromFirestore();
+    _loadUserRole();
+  }
+
+  Future<void> _loadUserRole() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userRole = prefs.getString('userRole');
+    setState(() {
+      _userRole = userRole ?? '';
+    });
   }
 
   void getDataFromFirestore() async {
