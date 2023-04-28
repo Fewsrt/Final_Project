@@ -1,9 +1,5 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class AddDevicePage extends StatefulWidget {
@@ -21,17 +17,21 @@ class _AddDevicePageState extends State<AddDevicePage> {
   final _qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? _controller;
 
-  LatLng? _pickedLocation;
-
   void _addDevice() async {
     try {
+      // Get the current user's UID
+      // final user = FirebaseAuth.instance.currentUser;
+      // final uid = user!.uid;
+
       // Create a new device document in Firestore
-      await FirebaseFirestore.instance.collection('Devices').add({
+      await FirebaseFirestore.instance
+          // .collection('users')
+          // .doc(uid)
+          .collection('Devices')
+          .add({
         'device_name': _nameController.text,
         'type': _typeController.text,
         'uuid': _serialNumberController.text,
-        'lat': _pickedLocation!.latitude,
-        'long': _pickedLocation!.longitude,
       });
 
       // Navigate back to the previous Page
@@ -67,44 +67,6 @@ class _AddDevicePageState extends State<AddDevicePage> {
         );
       }
     });
-  }
-
-  void _pickLocation() async {
-    final currentPosition = await Geolocator.getCurrentPosition();
-    final CameraPosition initialCameraPosition = CameraPosition(
-      target: LatLng(currentPosition.latitude, currentPosition.longitude),
-      zoom: 16,
-    );
-    final pickedLocation = await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => Scaffold(
-          appBar: AppBar(
-            title: const Text('Pick Location'),
-          ),
-          body: GoogleMap(
-            initialCameraPosition: initialCameraPosition,
-            onTap: (position) {
-              setState(() {
-                _pickedLocation = position;
-              });
-            },
-            markers: _pickedLocation == null
-                ? {}
-                : {
-                    Marker(
-                      markerId: const MarkerId('pickedLocation'),
-                      position: _pickedLocation!,
-                    ),
-                  },
-          ),
-        ),
-      ),
-    );
-    if (pickedLocation != null) {
-      setState(() {
-        _pickedLocation = pickedLocation;
-      });
-    }
   }
 
   Widget _buildQRScanner() {
@@ -173,11 +135,6 @@ class _AddDevicePageState extends State<AddDevicePage> {
                   }
                   return null;
                 },
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _pickLocation,
-                child: const Text('Pick Location'),
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(

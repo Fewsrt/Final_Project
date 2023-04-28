@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alert/component/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,6 +22,7 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    _getDeviceLocations();
   }
 
   void _getCurrentLocation() async {
@@ -33,9 +35,33 @@ class _MapScreenState extends State<MapScreen> {
           desiredAccuracy: LocationAccuracy.high);
       setState(() {
         _center = LatLng(position.latitude, position.longitude);
-        debugPrint("Current location: $_center");
+        // debugPrint("Current location: $_center");
       });
     }
+  }
+
+  void _getDeviceLocations() async {
+    // Get the collection of devices from Firestore
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection('Devices').get();
+
+    // debugPrint("QuerySnapshot size: ${querySnapshot.size}");
+
+    // Create a marker for each document in the collection
+    querySnapshot.docs.forEach((doc) {
+      double lat = doc['lat'];
+      double long = doc['long'];
+      Marker marker = Marker(
+        markerId: MarkerId(doc.id),
+        position: LatLng(lat, long),
+        infoWindow: InfoWindow(title: doc['device_name']),
+      );
+      _markers.add(marker);
+    });
+
+    // debugPrint("Markers size: ${_markers.length}");
+
+    setState(() {}); // Update the UI to show the markers on the map
   }
 
   @override
@@ -55,11 +81,14 @@ class _MapScreenState extends State<MapScreen> {
               )
             : CameraPosition(
                 target: _center!,
-                zoom: 13.0,
+                zoom: 14.0,
               ),
         onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
+          if (!_controller.isCompleted) {
+            _controller.complete(controller);
+          }
         },
+        markers: _markers,
         myLocationEnabled: true,
         myLocationButtonEnabled: true,
       ),
