@@ -22,7 +22,7 @@ class _SignUpState extends State<SignUpPage> {
   String _name = "";
   String _email = "";
   String _password = "";
-  String _role = "user";
+  final String _role = "user";
   bool _isLoading = false;
 
   void _handleSignUp() async {

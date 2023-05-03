@@ -1,13 +1,14 @@
 // ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
+import 'package:alert/Screens/Welcome/welcome_screen.dart';
 import 'package:alert/Screens/map/mapscreen.dart';
+import 'package:alert/Screens/signin/signin.dart';
 import 'package:alert/Screens/usersetting/usersetting.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alert/Screens/card_device/card_device.dart';
 import 'package:alert/Screens/history/history.dart';
-import 'package:alert/Screens/signin/signin.dart';
 import 'package:alert/Screens/userlist/userlist.dart';
 
 class CustomDrawer extends StatefulWidget {
@@ -128,7 +129,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SigninScreen(),
+                  builder: (context) => const WelcomeScreen(),
                 ),
                 (route) => false,
               );

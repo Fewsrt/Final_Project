@@ -1,5 +1,5 @@
-// ignore_for_file: library_private_types_in_public_api
-import 'package:alert/component/custom_drawer.dart';
+// ignore_for_file: library_private_types_in_public_api, prefer_interpolation_to_compose_strings
+import 'package:alert/components/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,7 +11,7 @@ class UserListScreen extends StatefulWidget {
 
 class _UserListScreenState extends State<UserListScreen> {
   late Stream<QuerySnapshot> _usersStream;
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {

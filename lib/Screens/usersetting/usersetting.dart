@@ -1,8 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:alert/component/custom_drawer.dart';
+import 'package:alert/components/custom_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserSettingsPage extends StatefulWidget {
   final String uid;
@@ -31,9 +32,9 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
         Map<String, dynamic> data = snapshot.data()!;
         _nameController.text = data["name"];
         _surnameController.text = data["surname"];
-        setState(() {
-          _imageURL = data["image_url"];
-        });
+        // setState(() {
+        //   _imageURL = data["image_url"];
+        // });
       }
     });
   }
@@ -86,7 +87,7 @@ class _UserSettingsPageState extends State<UserSettingsPage> {
                 FirebaseFirestore.instance
                     .collection("users")
                     .doc(widget.uid)
-                    .set({
+                    .update({
                   "name": _nameController.text,
                   "surname": _surnameController.text,
                   "image_url": _imageURL,

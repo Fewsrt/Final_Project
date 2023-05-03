@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:alert/component/custom_drawer.dart';
+import 'package:alert/components/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_table/responsive_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -37,7 +37,7 @@ class _HistoryPageState extends State<HistoryPage> {
   var random = new Random();
 
   Future<List<Map<String, dynamic>>> _generateDataFromFirestore(
-      {int n: 100}) async {
+      {int n = 100}) async {
     final QuerySnapshot<Map<String, dynamic>> snapshot =
         await FirebaseFirestore.instance.collection('Datavalue').limit(n).get();
 
@@ -84,7 +84,7 @@ class _HistoryPageState extends State<HistoryPage> {
     });
   }
 
-  _resetData({start: 0}) async {
+  _resetData({start = 0}) async {
     setState(() => _isLoading = true);
     var expandedLen =
         _total - start < _currentPerPage! ? _total - start : _currentPerPage;

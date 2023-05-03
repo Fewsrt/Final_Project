@@ -1,4 +1,5 @@
 import 'package:alert/Screens/card_device/card_device.dart';
+import 'package:alert/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:alert/Screens/signup/signup.dart';
@@ -98,6 +99,7 @@ class _SignInState extends State<SignInPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign In'),
+        backgroundColor: kPrimaryColor,
       ),
       body: _isLoading
           ? const Center(
@@ -139,6 +141,7 @@ class _SignInState extends State<SignInPage> {
                         onPressed: _handleSignIn,
                         child: const Text('Sign In'),
                       ),
+                      const SizedBox(height: 12.0),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pushReplacement(

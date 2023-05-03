@@ -1,6 +1,6 @@
 import 'package:alert/Screens/add_device/add_device.dart';
 import 'package:alert/Screens/admin_dashboard/admin_dashboard.dart';
-import 'package:alert/component/custom_drawer.dart';
+import 'package:alert/components/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';

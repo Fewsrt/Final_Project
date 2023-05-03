@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class SettingDevice extends StatefulWidget {
   final String uid;
 
-  SettingDevice({super.key, required this.uid});
+  const SettingDevice({super.key, required this.uid});
 
   @override
   _SettingDeviceState createState() => _SettingDeviceState();

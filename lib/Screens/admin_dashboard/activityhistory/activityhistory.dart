@@ -36,7 +36,7 @@ class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
   var random = new Random();
 
   Future<List<Map<String, dynamic>>> _generateDataFromFirestore(
-      {int n: 100}) async {
+      {int n = 100}) async {
     final QuerySnapshot<Map<String, dynamic>> snapshot =
         await FirebaseFirestore.instance.collection('Datavalue').limit(n).get();
 
@@ -83,7 +83,7 @@ class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
     });
   }
 
-  _resetData({start: 0}) async {
+  _resetData({start = 0}) async {
     setState(() => _isLoading = true);
     var expandedLen =
         _total - start < _currentPerPage! ? _total - start : _currentPerPage;

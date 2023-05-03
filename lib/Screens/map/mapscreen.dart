@@ -1,6 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api, avoid_function_literals_in_foreach_calls
+
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:alert/component/custom_drawer.dart';
+import 'package:alert/components/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';

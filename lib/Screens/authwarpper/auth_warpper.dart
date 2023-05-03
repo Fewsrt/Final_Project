@@ -1,5 +1,5 @@
+import 'package:alert/Screens/Welcome/welcome_screen.dart';
 import 'package:alert/Screens/card_device/card_device.dart';
-import 'package:alert/Screens/signin/signin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,7 +43,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
             return const CardDevicePage();
           } else {
             // User is not signed in, navigate to sign in screen
-            return const SigninScreen();
+            return const WelcomeScreen();
           }
         }
       },

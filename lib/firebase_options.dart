@@ -65,13 +65,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDhqtqXSE_DS_DhlTk-ZVNBPJaYOGIn6sc',
-    appId: '1:955799194825:ios:ba20e8a5b75fcdf2e49118',
+    appId: '1:955799194825:ios:8c2daf4d2b96657fe49118',
     messagingSenderId: '955799194825',
     projectId: 'final-project-6b3e9',
     databaseURL: 'https://final-project-6b3e9-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'final-project-6b3e9.appspot.com',
-    iosClientId: '955799194825-revq4n1jv94o6gi27adsioj5p4h79r07.apps.googleusercontent.com',
-    iosBundleId: 'com.example.alert',
+    iosBundleId: 'com.beta.alert',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
