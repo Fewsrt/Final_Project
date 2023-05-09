@@ -1,9 +1,11 @@
 import 'package:alert/Screens/Welcome/welcome_screen.dart';
-import 'package:alert/Screens/card_device/card_device.dart';
+import 'package:alert/controllers/responsive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../components/custom_container.dart';
 
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
@@ -40,7 +42,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
             // Save the user's ID to shared preferences or secure storage
             _saveUserRole(user!.uid);
             // User is signed in, navigate to home screen
-            return const CardDevicePage();
+            return const Responsive(
+              mobile: CustomDrawer(),
+              desktop: CustomDrawer(),
+              tablet: CustomDrawer(),
+            );
           } else {
             // User is not signed in, navigate to sign in screen
             return const WelcomeScreen();

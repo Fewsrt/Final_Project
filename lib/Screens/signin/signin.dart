@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../components/background.dart';
-import '../../responsive.dart';
+import '../../controllers/responsive.dart';
 import 'components/signin_form.dart';
 import 'components/signin_screen_top_image.dart';
 
@@ -20,6 +20,25 @@ class SigninScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: SafeArea(
             child: Responsive(
+              tablet: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Expanded(
+                    child: SigninScreenTopImage(),
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        SizedBox(
+                          width: 450,
+                          child: LoginForm(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               desktop: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

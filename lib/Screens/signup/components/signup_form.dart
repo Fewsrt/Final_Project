@@ -1,13 +1,13 @@
 // ignore_for_file: library_private_types_in_public_api
 
+import 'package:alert/components/custom_container.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:alert/Screens/card_device/card_device.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
-import '../../../constants.dart';
+import '../../../controllers/constants.dart';
 import '../../../Screens/signin/signin.dart';
 
 class SignUpForm extends StatefulWidget {
@@ -26,6 +26,7 @@ class _SignUpFormState extends State<SignUpForm> {
   bool isLoading = false;
 
   void _signUp() async {
+    final currentTime = DateTime.now();
     if (_formKey.currentState!.validate()) {
       try {
         setState(() {
@@ -42,7 +43,8 @@ class _SignUpFormState extends State<SignUpForm> {
           'name': _nameController.text,
           'surname': _surnameController.text,
           'email': _emailController.text,
-          'role': "user"
+          'role': "user",
+          'created_at': currentTime.toIso8601String(),
         });
 
         await _saveUserRole(userCredential.user!.uid);
@@ -51,7 +53,7 @@ class _SignUpFormState extends State<SignUpForm> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => const CardDevicePage(),
+              builder: (BuildContext context) => const CustomDrawer(),
             ),
           );
         });

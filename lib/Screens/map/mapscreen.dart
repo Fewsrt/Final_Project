@@ -1,8 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_function_literals_in_foreach_calls
 
 import 'dart:async';
+import 'package:alert/Screens/admin_dashboard/admin_dashboard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:alert/components/custom_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -27,6 +27,14 @@ class _MapScreenState extends State<MapScreen> {
     _getDeviceLocations();
   }
 
+  void _onMarkerTapped(String deviceId) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AdminDashboardPage(deviceId: deviceId),
+      ),
+    );
+  }
+
   void _getCurrentLocation() async {
     bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
     LocationPermission permission = await Geolocator.checkPermission();
@@ -42,37 +50,54 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  void _getDeviceLocations() async {
-    // Get the collection of devices from Firestore
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection('Devices').get();
+  void _getDeviceLocations() {
+    FirebaseFirestore.instance
+        .collection('Devices')
+        .snapshots()
+        .listen((QuerySnapshot querySnapshot) {
+      querySnapshot.docChanges.forEach((docChange) {
+        String deviceId = docChange.doc.id;
+        double lat = docChange.doc['lat'];
+        double long = docChange.doc['long'];
+        String status = docChange
+            .doc['Status']; // Assuming 'status' field exists in Firestore
 
-    // debugPrint("QuerySnapshot size: ${querySnapshot.size}");
+        bool isOffline = status == 'Offline';
 
-    // Create a marker for each document in the collection
-    querySnapshot.docs.forEach((doc) {
-      double lat = doc['lat'];
-      double long = doc['long'];
-      Marker marker = Marker(
-        markerId: MarkerId(doc.id),
-        position: LatLng(lat, long),
-        infoWindow: InfoWindow(title: doc['device_name']),
-      );
-      _markers.add(marker);
+        BitmapDescriptor markerIcon = isOffline
+            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)
+            : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+
+        Marker marker = Marker(
+          markerId: MarkerId(deviceId),
+          position: LatLng(lat, long),
+          icon: markerIcon,
+          infoWindow: InfoWindow(
+            title: docChange.doc['device_name'],
+            snippet: isOffline ? 'Offline' : 'Tap to View more',
+            onTap: isOffline ? null : () => _onMarkerTapped(deviceId),
+          ),
+        );
+
+        setState(() {
+          if (docChange.type == DocumentChangeType.added) {
+            _markers.add(marker);
+          } else if (docChange.type == DocumentChangeType.modified) {
+            _markers.removeWhere((existingMarker) =>
+                existingMarker.markerId == MarkerId(deviceId));
+            _markers.add(marker);
+          } else if (docChange.type == DocumentChangeType.removed) {
+            _markers.removeWhere((existingMarker) =>
+                existingMarker.markerId == MarkerId(deviceId));
+          }
+        });
+      });
     });
-
-    // debugPrint("Markers size: ${_markers.length}");
-
-    setState(() {}); // Update the UI to show the markers on the map
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Map"),
-      ),
-      drawer: const CustomDrawer(),
       body: GoogleMap(
         key: ValueKey(_center),
         mapType: MapType.normal,

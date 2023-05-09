@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:alert/constants.dart';
+import 'package:alert/controllers/constants.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'model/firebase_options.dart';
 import 'package:alert/Screens/authwarpper/auth_warpper.dart';
 
 void main() async {

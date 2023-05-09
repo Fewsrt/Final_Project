@@ -1,13 +1,13 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:alert/Screens/card_device/card_device.dart';
+import 'package:alert/components/custom_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
-import '../../../constants.dart';
+import '../../../controllers/constants.dart';
 import '../../signup/signup.dart';
 
 class LoginForm extends StatefulWidget {
@@ -43,7 +43,7 @@ class _LoginFormState extends State<LoginForm> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => const CardDevicePage(),
+              builder: (BuildContext context) => const CustomDrawer(),
             ),
           );
         });
@@ -71,11 +71,13 @@ class _LoginFormState extends State<LoginForm> {
         await firestore.collection('users').doc(userId).get();
     String role = userSnapshot.get('role');
     String name = userSnapshot.get('name');
+    String surname = userSnapshot.get('surname');
     String email = userSnapshot.get('email');
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('userRole', role);
     prefs.setString('userName', name);
+    prefs.setString('userSurname', surname);
     prefs.setString('userEmail', email);
     prefs.setString('userId', userId);
   }

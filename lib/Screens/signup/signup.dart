@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:alert/constants.dart';
-import 'package:alert/responsive.dart';
+import 'package:alert/controllers/constants.dart';
+import 'package:alert/controllers/responsive.dart';
 import '../../components/background.dart';
 import 'components/sign_up_top_image.dart';
 import 'components/signup_form.dart';
-import 'components/socal_sign_up.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -22,6 +21,26 @@ class SignUpScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Responsive(
             mobile: const MobileSignupScreen(),
+            tablet: Row(
+              children: [
+                const Expanded(
+                  child: SignUpScreenTopImage(),
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      SizedBox(
+                        width: 450,
+                        child: SignUpForm(),
+                      ),
+                      SizedBox(height: defaultPadding / 2),
+                      // SocalSignUp()
+                    ],
+                  ),
+                )
+              ],
+            ),
             desktop: Row(
               children: [
                 const Expanded(

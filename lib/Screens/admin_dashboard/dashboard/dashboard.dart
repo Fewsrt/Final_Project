@@ -33,9 +33,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   CollectionReference devicesCollection =
       FirebaseFirestore.instance.collection('Devices');
+  CollectionReference activityCollection =
+      FirebaseFirestore.instance.collection('Activity');
   String deviceName = '';
   String uuid = '';
   String _userRole = '';
+  String _userSurname = '';
+  String _userName = '';
 
   StreamSubscription<fb.DatabaseEvent>? _buttonSubscription;
   StreamSubscription<fb.DatabaseEvent>? _sensorSubscription;
@@ -57,8 +61,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Future<void> _loadUserRole() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? userRole = prefs.getString('userRole');
+    String? userSurname = prefs.getString('userSurname');
+    String? userName = prefs.getString('userName');
     setState(() {
       _userRole = userRole ?? '';
+      _userSurname = userSurname ?? '';
+      _userName = userName ?? '';
     });
   }
 
@@ -118,6 +126,15 @@ class _DashBoardPageState extends State<DashBoardPage> {
       _auto = value;
     });
     await refbutton.update({"$uuid/Buttons/AutoButton": value});
+
+    String action = value ? 'open' : 'close';
+    await activityCollection.add({
+      'button': 'AutoButton',
+      'value': action,
+      'timestamp': FieldValue.serverTimestamp(),
+      'user': '$_userName $_userSurname',
+      'uuid': uuid
+    });
   }
 
   Future<void> _handleSwitchdrain(bool value) async {
@@ -125,6 +142,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
       _drain = value;
     });
     await refbutton.update({"$uuid/Buttons/drainButton": value});
+
+    String action = value ? 'open' : 'close';
+
+    await activityCollection.add({
+      'button': 'Drain',
+      'value': action,
+      'timestamp': FieldValue.serverTimestamp(),
+      'user': '$_userName $_userSurname',
+      'uuid': uuid
+    });
   }
 
   Future<void> _handleSwitchpumpleft(bool value) async {
@@ -132,6 +159,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
       _pumpleft = value;
     });
     await refbutton.update({"$uuid/Buttons/VillageButton": value});
+
+    String action = value ? 'open' : 'close';
+
+    await activityCollection.add({
+      'button': 'PumpLeft',
+      'value': action,
+      'timestamp': FieldValue.serverTimestamp(),
+      'user': '$_userName $_userSurname',
+      'uuid': uuid
+    });
   }
 
   Future<void> _handleSwitchpumpright(bool value) async {
@@ -139,6 +176,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
       _pumpright = value;
     });
     await refbutton.update({"$uuid/Buttons/riverButton": value});
+
+    String action = value ? 'open' : 'close';
+
+    await activityCollection.add({
+      'button': 'PumpRight',
+      'value': action,
+      'timestamp': FieldValue.serverTimestamp(),
+      'user': '$_userName $_userSurname',
+      'uuid': uuid
+    });
   }
 
   Future<void> _handleSwitchdoor1(bool value) async {
@@ -146,6 +193,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
       _door1 = value;
     });
     await refbutton.update({"$uuid/Buttons/door1Button": value});
+
+    String action = value ? 'open' : 'close';
+
+    await activityCollection.add({
+      'button': 'Door1',
+      'value': action,
+      'timestamp': FieldValue.serverTimestamp(),
+      'user': '$_userName $_userSurname',
+      'uuid': uuid
+    });
   }
 
   Future<void> _handleSwitchdoor2(bool value) async {
@@ -153,6 +210,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
       _door2 = value;
     });
     await refbutton.update({"$uuid/Buttons/door2Button": value});
+
+    String action = value ? 'open' : 'close';
+
+    await activityCollection.add({
+      'button': 'Door2',
+      'value': action,
+      'timestamp': FieldValue.serverTimestamp(),
+      'user': '$_userName $_userSurname',
+      'uuid': uuid
+    });
   }
 
   @override
@@ -160,84 +227,244 @@ class _DashBoardPageState extends State<DashBoardPage> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_userRole == 'admin')
+                      const Text(
+                        'Control:',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    const SizedBox(height: 16.0),
+                    if (_userRole == 'admin')
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _handleSwitchAuto(!_auto),
+                              child: _buildButtonCard(
+                                title: 'Auto',
+                                icon:
+                                    _auto ? Icons.toggle_on : Icons.toggle_off,
+                                color: _getButtonColor(_auto),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _handleSwitchdrain(!_drain),
+                              child: _buildButtonCard(
+                                title: 'Drain',
+                                icon:
+                                    _drain ? Icons.toggle_on : Icons.toggle_off,
+                                color: _getButtonColor(_drain),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (_userRole == 'admin')
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _handleSwitchpumpleft(!_pumpleft),
+                              child: _buildButtonCard(
+                                title: 'Pump Left',
+                                icon: _pumpleft
+                                    ? Icons.toggle_on
+                                    : Icons.toggle_off,
+                                color: _getButtonColor(_pumpleft),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _handleSwitchpumpright(!_pumpright),
+                              child: _buildButtonCard(
+                                title: 'Pump Right',
+                                icon: _pumpright
+                                    ? Icons.toggle_on
+                                    : Icons.toggle_off,
+                                color: _getButtonColor(_pumpright),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (_userRole == 'admin')
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _handleSwitchdoor1(!_door1),
+                              child: _buildButtonCard(
+                                title: 'Door 1',
+                                icon:
+                                    _door1 ? Icons.toggle_on : Icons.toggle_off,
+                                color: _getButtonColor(_door1),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () => _handleSwitchdoor2(!_door2),
+                              child: _buildButtonCard(
+                                title: 'Door 2',
+                                icon:
+                                    _door2 ? Icons.toggle_on : Icons.toggle_off,
+                                color: _getButtonColor(_door2),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (_userRole == 'admin') const SizedBox(height: 16.0),
+                    const Text(
+                      'Sensor Value:',
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16.0),
+                    SizedBox(
+                      height: 80, // Set the desired height
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.white, // Set the desired background color
+                        child: ListTile(
+                          title: const Text('Direction'),
+                          subtitle: Text('$_direction'),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.white, // Set the desired background color
+                        child: ListTile(
+                          title: const Text('Temperature'),
+                          subtitle: Text('$_temperature'),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.white, // Set the desired background color
+                        child: ListTile(
+                          title: const Text('Humidity'),
+                          subtitle: Text('$_humidity'),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.white, // Set the desired background color
+                        child: ListTile(
+                          title: const Text('Ultrasonic Left'),
+                          subtitle: Text('$_ultrasonicleft'),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.white, // Set the desired background color
+                        child: ListTile(
+                          title: const Text('Ultrasonic Right'),
+                          subtitle: Text('$_ultrasonicright'),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.white, // Set the desired background color
+                        child: ListTile(
+                          title: const Text('Rain'),
+                          subtitle: Text('$_rain'),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        color: Colors.white, // Set the desired background color
+                        child: ListTile(
+                          title: const Text('Wind Speed'),
+                          subtitle: Text('$_windspeed'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Color _getButtonColor(bool state) {
+    return state ? Colors.green : Colors.red;
+  }
+
+  Widget _buildButtonCard(
+      {required String title, required IconData icon, required Color color}) {
+    return Card(
+      elevation: 4.0,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (_userRole == 'admin')
-              const Text(
-                'Control:',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color: color,
               ),
-            const SizedBox(height: 16.0),
-            if (_userRole == 'admin')
-              Row(
-                children: [
-                  Expanded(
-                    child: SwitchListTile(
-                      title: const Text('Auto'),
-                      value: _auto,
-                      onChanged: _handleSwitchAuto,
-                    ),
-                  ),
-                  Expanded(
-                    child: SwitchListTile(
-                      title: const Text('Drain'),
-                      value: _drain,
-                      onChanged: _handleSwitchdrain,
-                    ),
-                  ),
-                ],
-              ),
-            if (_userRole == 'admin')
-              Row(
-                children: [
-                  Expanded(
-                    child: SwitchListTile(
-                        title: const Text('Pump Left'),
-                        value: _pumpleft,
-                        onChanged: _handleSwitchpumpleft),
-                  ),
-                  Expanded(
-                    child: SwitchListTile(
-                      title: const Text('Pump Right'),
-                      value: _pumpright,
-                      onChanged: _handleSwitchpumpright,
-                    ),
-                  ),
-                ],
-              ),
-            if (_userRole == 'admin')
-              Row(
-                children: [
-                  Expanded(
-                    child: SwitchListTile(
-                      title: const Text('Door 1'),
-                      value: _door1,
-                      onChanged: _handleSwitchdoor1,
-                    ),
-                  ),
-                  Expanded(
-                    child: SwitchListTile(
-                      title: const Text('Door 2'),
-                      value: _door2,
-                      onChanged: _handleSwitchdoor2,
-                    ),
-                  ),
-                ],
-              ),
-            if (_userRole == 'admin') const SizedBox(height: 16.0),
-            const Text(
-              'Sensor Value:',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16.0),
-            Text('Direction: $_direction'),
-            Text('Temperature: $_temperature'),
-            Text('Humidity: $_humidity'),
-            Text('Ultrasonic Left: $_ultrasonicleft'),
-            Text('Ultrasonic Right: $_ultrasonicright'),
-            Text('Rain: $_rain'),
-            Text('Wind Speed: $_windspeed'),
+            const SizedBox(height: 8.0),
+            Icon(
+              icon,
+              color: color,
+            ),
           ],
         ),
       ),

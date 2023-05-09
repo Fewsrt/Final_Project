@@ -1,10 +1,19 @@
 import 'dart:math';
+import 'package:alert/controllers/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_table/responsive_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class DataHistoryPage extends StatefulWidget {
-  const DataHistoryPage({Key? key}) : super(key: key);
+  final String deviceId;
+  final String uuid;
+
+  const DataHistoryPage({
+    Key? key,
+    required this.deviceId,
+    required this.uuid,
+  }) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
   _DataHistoryPageState createState() => _DataHistoryPageState();
@@ -37,8 +46,11 @@ class _DataHistoryPageState extends State<DataHistoryPage> {
 
   Future<List<Map<String, dynamic>>> _generateDataFromFirestore(
       {int n = 100}) async {
-    final QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('Datavalue').limit(n).get();
+  final QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+      .collection('Datavalue')
+      .where('uuid', isEqualTo: widget.uuid)
+      .limit(n)
+      .get();
 
     final List<QueryDocumentSnapshot<Map<String, dynamic>>> documents =
         snapshot.docs;
@@ -47,9 +59,15 @@ class _DataHistoryPageState extends State<DataHistoryPage> {
 
     for (var i = 0; i < documents.length; i++) {
       final Map<String, dynamic> documentData = documents[i].data();
+      final createdAt = documentData['createdAt']
+          ?.toDate(); // Assuming 'createdAt' is a DateTime object
+
+      final dateFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+      final formattedCreatedAt =
+          createdAt != null ? dateFormatter.format(createdAt) : '-';
 
       temps.add({
-        "timestamp": documentData['timestamp'],
+        "timestamp": formattedCreatedAt,
         "villageSensor": documentData['villageSensor'],
         "riverSensor": documentData['riverSensor'],
         "temperature": documentData['temperature'],
@@ -122,6 +140,8 @@ class _DataHistoryPageState extends State<DataHistoryPage> {
   @override
   void initState() {
     super.initState();
+    // print(widget.deviceId);
+    // print(widget.uuid);
 
     /// set headers
     _headers = [
@@ -188,6 +208,7 @@ class _DataHistoryPageState extends State<DataHistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Data History'),
+        backgroundColor: kPrimaryColor,
         actions: [
           IconButton(
             onPressed: _initializeData,

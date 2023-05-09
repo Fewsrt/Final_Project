@@ -21,6 +21,12 @@
             "type": "dart",
             "deviceId": "chrome"
         },
+        {
+            "name": "iPhone 14 Pro Max (mobile)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "E0D0797C-395B-419D-BF1F-6770E5186C0C"
+        },
         // {
         //     "name": "alert (profile mode)",
         //     "request": "launch",
@@ -37,7 +43,7 @@
     "compounds": [
         {
             "name": "All Devices",
-            "configurations": ["Chonnaphat's iPhone 12 (mobile)","Chrome (web)"]
+            "configurations": ["iPhone 14 Pro Max (mobile)","Chrome (web)"]
         }
     ]
 }

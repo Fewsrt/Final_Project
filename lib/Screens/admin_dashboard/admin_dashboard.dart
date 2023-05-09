@@ -1,16 +1,25 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:alert/Screens/admin_dashboard/activityhistory/activityhistory.dart';
+import 'package:alert/Screens/admin_dashboard/activityhistory/desktop_activityhistory.dart';
 import 'package:alert/Screens/admin_dashboard/dashboard/dashboard.dart';
+import 'package:alert/Screens/admin_dashboard/dashboard/desktop_dashboard.dart';
 import 'package:alert/Screens/admin_dashboard/datahistory/datahistory.dart';
+import 'package:alert/Screens/admin_dashboard/datahistory/desktop_datahistory.dart';
+import 'package:alert/controllers/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:alert/controllers/responsive.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Initialize Firebase
-  runApp(const AdminDashboardPage(
-    deviceId: '',
+
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String deviceId = prefs.getString('deviceId') ?? '';
+
+  runApp(AdminDashboardPage(
+    deviceId: deviceId,
   ));
 }
 
@@ -33,9 +42,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   int _selectedIndex = 0;
   String _userRole = '';
 
-  static List<Widget> _widgetOptions(String deviceId) {
+  List<Widget> _widgetOptions(String deviceId) {
     return <Widget>[
-      DashBoardPage(deviceId: deviceId),
+      if (Responsive.isDesktop(context) || Responsive.isTablet(context))
+        DesktopDashBoardPage(deviceId: deviceId)
+      else
+        DashBoardPage(deviceId: deviceId),
     ];
   }
 
@@ -54,27 +66,67 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                     ListTile(
                       title: const Text('Activity history'),
                       onTap: () {
-                        Future.microtask(() {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
+                        if (Responsive.isDesktop(context) ||
+                            Responsive.isTablet(context)) {
+                          Future.microtask(() {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
                                 builder: (context) =>
-                                    const ActivityHistoryPage()),
-                          );
-                        });
+                                    DesktopActivityHistoryPage(
+                                  deviceId: widget.deviceId,
+                                  uuid: uuid,
+                                ),
+                              ),
+                            );
+                          });
+                        }
+                        if (Responsive.isMobile(context)) {
+                          Future.microtask(() {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ActivityHistoryPage(
+                                  deviceId: widget.deviceId,
+                                  uuid: uuid,
+                                ),
+                              ),
+                            );
+                          });
+                        }
                       },
                     ),
                   const Divider(), // add a divider between the options
                   ListTile(
                     title: const Text('Data history'),
                     onTap: () {
-                      Future.microtask(() {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const DataHistoryPage()),
-                        );
-                      });
+                      if (Responsive.isDesktop(context) ||
+                          Responsive.isTablet(context)) {
+                        Future.microtask(() {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DesktopHistoryPage(
+                                deviceId: widget.deviceId,
+                                uuid: uuid,
+                              ),
+                            ),
+                          );
+                        });
+                      }
+                      if (Responsive.isMobile(context)) {
+                        Future.microtask(() {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DataHistoryPage(
+                                deviceId: widget.deviceId,
+                                uuid: uuid, // Pass the uuid to DataHistoryPage
+                              ),
+                            ),
+                          );
+                        });
+                      }
                     },
                   ),
                 ],
@@ -90,11 +142,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     }
   }
 
+  void _handleFloatingActionButtonTap() {
+    // Call the _onItemTapped function with the desired index
+    _onItemTapped(1); // Example: Pass 1 to navigate to the History page
+  }
+
   @override
   void initState() {
     super.initState();
     getDataFromFirestore();
     _loadUserRole();
+    // print(widget.deviceId);
   }
 
   Future<void> _loadUserRole() async {
@@ -122,21 +180,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(deviceName),
+        backgroundColor: kPrimaryColor,
       ),
       body: _widgetOptions(widget.deviceId).elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'DashBoard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'History',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _handleFloatingActionButtonTap,
+        backgroundColor: kPrimaryColor,
+        child: const Icon(Icons.history),
       ),
     );
   }

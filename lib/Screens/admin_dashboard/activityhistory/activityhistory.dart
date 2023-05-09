@@ -1,10 +1,19 @@
 import 'dart:math';
+import 'package:alert/controllers/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_table/responsive_table.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ActivityHistoryPage extends StatefulWidget {
-  const ActivityHistoryPage({Key? key}) : super(key: key);
+  final String deviceId;
+  final String uuid;
+
+  const ActivityHistoryPage({
+    Key? key,
+    required this.deviceId,
+    required this.uuid,
+  }) : super(key: key);
   @override
   // ignore: library_private_types_in_public_api
   _ActivityHistoryPageState createState() => _ActivityHistoryPageState();
@@ -13,9 +22,9 @@ class ActivityHistoryPage extends StatefulWidget {
 class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
   late List<DatatableHeader> _headers;
 
-  final List<int> _perPages = [10, 20, 50, 100];
+  final List<int> _perPages = [1, 5, 10, 20, 50, 100];
   int _total = 100;
-  int? _currentPerPage = 10;
+  int? _currentPerPage = 5;
   List<bool>? _expanded;
   String? _searchKey = "id";
 
@@ -37,8 +46,12 @@ class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
 
   Future<List<Map<String, dynamic>>> _generateDataFromFirestore(
       {int n = 100}) async {
-    final QuerySnapshot<Map<String, dynamic>> snapshot =
-        await FirebaseFirestore.instance.collection('Datavalue').limit(n).get();
+    final QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('Activity')
+        .where('uuid', isEqualTo: widget.uuid)
+        .limit(n)
+        .get();
 
     final List<QueryDocumentSnapshot<Map<String, dynamic>>> documents =
         snapshot.docs;
@@ -47,17 +60,18 @@ class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
 
     for (var i = 0; i < documents.length; i++) {
       final Map<String, dynamic> documentData = documents[i].data();
+      final createdAt = documentData['timestamp']
+          ?.toDate(); // Assuming 'createdAt' is a DateTime object
+
+      final dateFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+      final formattedCreatedAt =
+          createdAt != null ? dateFormatter.format(createdAt) : '-';
 
       temps.add({
-        "timestamp": documentData['timestamp'],
-        "villageSensor": documentData['villageSensor'],
-        "riverSensor": documentData['riverSensor'],
-        "temperature": documentData['temperature'],
-        "humidity": documentData['humidity'],
-        "windSpeed": documentData['windSpeed'],
-        "direction": documentData['direction'],
-        "rainGuage": documentData['rainGuage'],
-        "status": documentData['status'],
+        "timestamp": formattedCreatedAt,
+        "button": documentData['button'],
+        "value": documentData['value'],
+        "user": documentData['user'],
       });
     }
 
@@ -132,46 +146,22 @@ class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
           sortable: true,
           textAlign: TextAlign.center),
       DatatableHeader(
-          text: "VillageSensor",
-          value: "villageSensor",
+          text: "Button",
+          value: "button",
           show: true,
           sortable: true,
           textAlign: TextAlign.center),
       DatatableHeader(
-          text: "RiverSensor",
-          value: "riverSensor",
+          text: "Value",
+          value: "value",
           show: true,
           sortable: true,
           textAlign: TextAlign.center),
       DatatableHeader(
-          text: "Temperature",
-          value: "temperature",
+          text: "User",
+          value: "user",
           show: true,
           sortable: true,
-          textAlign: TextAlign.center),
-      DatatableHeader(
-          text: "Humidity",
-          value: "humidity",
-          show: true,
-          sortable: true,
-          textAlign: TextAlign.center),
-      DatatableHeader(
-          text: "WindSpeed",
-          value: "windSpeed",
-          show: true,
-          sortable: true,
-          textAlign: TextAlign.center),
-      DatatableHeader(
-          text: "Rirection",
-          value: "direction",
-          show: true,
-          sortable: true,
-          textAlign: TextAlign.center),
-      DatatableHeader(
-          text: "RainGuage",
-          value: "rainGuage",
-          show: true,
-          sortable: false,
           textAlign: TextAlign.center),
     ];
 
@@ -188,6 +178,7 @@ class _ActivityHistoryPageState extends State<ActivityHistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Activity History'),
+        backgroundColor: kPrimaryColor,
         actions: [
           IconButton(
             onPressed: _initializeData,
