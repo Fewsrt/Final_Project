@@ -230,6 +230,135 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              'Sensor Value:',
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16.0),
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    width: 200,
+                    height: 100,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Colors.white,
+                      child: ListTile(
+                        leading: const Icon(Icons.water),
+                        title: const Text('VillageSensor'),
+                        subtitle: Text('$_ultrasonicleft cm'),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: 200,
+                    height: 100,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Colors.white,
+                      child: ListTile(
+                        leading: const Icon(Icons.water),
+                        title: const Text('RiverSensor'),
+                        subtitle: Text('$_ultrasonicright cm'),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: 200,
+                    height: 100,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Colors.white,
+                      child: ListTile(
+                        leading: const Icon(Icons.thermostat),
+                        title: const Text('Temperature'),
+                        subtitle: Text('$_temperature °C'),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: 200,
+                    height: 100,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Colors.white,
+                      child: ListTile(
+                        leading: const Icon(Icons.opacity),
+                        title: const Text('Humidity'),
+                        subtitle: Text('$_humidity %'),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: 200,
+                    height: 100,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Colors.white,
+                      child: ListTile(
+                        leading: const Icon(Icons.beach_access),
+                        title: const Text('Rain'),
+                        subtitle: Text('$_rain mm'),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: 200,
+                    height: 100,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Colors.white,
+                      child: ListTile(
+                        leading: const Icon(Icons.compass_calibration),
+                        title: const Text('Direction'),
+                        subtitle: Text('$_direction'),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    width: 200,
+                    height: 100,
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      color: Colors.white,
+                      child: ListTile(
+                        leading: const Icon(Icons.speed),
+                        title: const Text('Wind Speed'),
+                        subtitle: Text('$_windspeed m/s'),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
             if (_userRole == 'admin')
               const Text(
                 'Control:',
@@ -301,100 +430,6 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
                   ),
                 ],
               ),
-            if (_userRole == 'admin') const SizedBox(height: 16.0),
-            const Text(
-              'Sensor Value:',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16.0),
-            Row(
-              children: [
-                Expanded(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    color: Colors.white, // Set the desired background color
-                    child: ListTile(
-                      title: const Text('Direction'),
-                      subtitle: Text('$_direction'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    color: Colors.white, // Set the desired background color
-                    child: ListTile(
-                      title: const Text('Temperature'),
-                      subtitle: Text('$_temperature'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    color: Colors.white, // Set the desired background color
-                    child: ListTile(
-                      title: const Text('Humidity'),
-                      subtitle: Text('$_humidity'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    color: Colors.white, // Set the desired background color
-                    child: ListTile(
-                      title: const Text('Ultrasonic Left'),
-                      subtitle: Text('$_ultrasonicleft'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    color: Colors.white, // Set the desired background color
-                    child: ListTile(
-                      title: const Text('Ultrasonic Right'),
-                      subtitle: Text('$_ultrasonicright'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    color: Colors.white, // Set the desired background color
-                    child: ListTile(
-                      title: const Text('Rain'),
-                      subtitle: Text('$_rain'),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    color: Colors.white, // Set the desired background color
-                    child: ListTile(
-                      title: const Text('Wind Speed'),
-                      subtitle: Text('$_windspeed'),
-                    ),
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),

@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, non_constant_identifier_names
 
 import 'package:alert/components/custom_container.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +24,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isLoading = false;
+  bool Locked = true;
 
   void _signUp() async {
     final currentTime = DateTime.now();
@@ -45,6 +46,7 @@ class _SignUpFormState extends State<SignUpForm> {
           'email': _emailController.text,
           'role': "user",
           'created_at': currentTime.toIso8601String(),
+          'isLocked': Locked
         });
 
         await _saveUserRole(userCredential.user!.uid);

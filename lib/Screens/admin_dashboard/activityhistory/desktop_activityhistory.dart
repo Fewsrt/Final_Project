@@ -332,20 +332,29 @@ class RowSource extends DataTableSource {
 }
 
 DataRow recentFileDataRow(Map<String, dynamic> data) {
-  final createdAt =
-      data['timestamp']?.toDate(); // Assuming 'createdAt' is a DateTime object
+  final timestamp = data['timestamp'];
 
-  final dateFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
-  final formattedCreatedAt =
-      createdAt != null ? dateFormatter.format(createdAt) : '-';
+  if (timestamp is Timestamp) {
+    final createdAt = timestamp.toDate();
+    final dateFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');
+    final formattedCreatedAt = dateFormatter.format(createdAt);
 
-  return DataRow(
-    cells: [
-      DataCell(Text(formattedCreatedAt)),
-      DataCell(Text(data['user']?.toString() ?? '-')),
-      DataCell(Text(data['uuid']?.toString() ?? '-')),
-      DataCell(Text(data['button']?.toString() ?? '-')),
-      DataCell(Text(data['value']?.toString() ?? '-')),
-    ],
-  );
+    return DataRow(
+      cells: [
+        DataCell(Text(formattedCreatedAt)),
+        DataCell(Text(data['user']?.toString() ?? '-')),
+        DataCell(Text(data['uuid']?.toString() ?? '-')),
+        DataCell(Text(data['button']?.toString() ?? '-')),
+        DataCell(Text(data['value']?.toString() ?? '-')),
+      ],
+    );
+  } else {
+    return const DataRow(cells: [
+      DataCell(Text('Invalid timestamp')),
+      DataCell(Text('')),
+      DataCell(Text('')),
+      DataCell(Text('')),
+      DataCell(Text('')),
+    ]);
+  }
 }

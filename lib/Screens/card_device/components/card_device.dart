@@ -1,9 +1,11 @@
 import 'package:alert/Screens/add_device/add_device.dart';
 import 'package:alert/Screens/admin_dashboard/admin_dashboard.dart';
 import 'package:alert/controllers/constants.dart';
+import 'package:alert/controllers/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class CardDevicePage extends StatefulWidget {
   const CardDevicePage({super.key});
@@ -49,18 +51,19 @@ class _CardDeviceState extends State<CardDevicePage> {
           },
         ),
       ),
-      floatingActionButton: _buildFloatingActionButton(),
+      floatingActionButton: (!kIsWeb || Responsive.isDesktop(context))
+          ? _buildFloatingActionButton()
+          : null,
     );
   }
 
-Stream<QuerySnapshot> _fetchDevices() {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  return firestore
-      .collection('Devices')
-      .orderBy('created_at', descending: false)
-      .snapshots();
-}
-
+  Stream<QuerySnapshot> _fetchDevices() {
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    return firestore
+        .collection('Devices')
+        .orderBy('created_at', descending: false)
+        .snapshots();
+  }
 
   Widget _buildCards(AsyncSnapshot<QuerySnapshot> snapshot) {
     return GridView.builder(

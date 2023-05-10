@@ -16,6 +16,12 @@
             "deviceId": "00008101-000C188C3C02001E"
         },
         {
+            "name": "Chonnaphat's iPad (mobile)",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "00008103-001A186936E0801E"
+        },
+        {
             "name": "Chrome (web)",
             "request": "launch",
             "type": "dart",

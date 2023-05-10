@@ -6,6 +6,7 @@ import 'package:alert/Screens/devicesetting/devicesetting.dart';
 import 'package:alert/controllers/constants.dart';
 import 'package:alert/controllers/responsive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alert/Screens/admin_dashboard/admin_dashboard.dart';
@@ -221,7 +222,9 @@ class _ListDevicePageState extends State<ListDevicePage> {
               ),
             ),
           ])),
-      floatingActionButton: _buildFloatingActionButton(),
+      floatingActionButton: (!kIsWeb || Responsive.isDesktop(context))
+          ? _buildFloatingActionButton()
+          : null,
     );
   }
 

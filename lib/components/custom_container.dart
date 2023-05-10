@@ -66,18 +66,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ALERT FLOODING'),
-        backgroundColor: kPrimaryColor,
-      ),
+          title: const Text('ALERT FLOODING'), backgroundColor: kPrimaryColor),
       drawer: SizedBox(
         width: 200,
         child: Drawer(
           elevation: Responsive.isDesktop(context) ? 0.0 : 16.0,
           child: Container(
             padding: EdgeInsets.zero, // Remove the default padding
-            decoration: const BoxDecoration(
-              color: kPrimaryLightColor, // Set the desired background color
-            ),
+            // decoration: const BoxDecoration(
+            //   color: kPrimaryLightColor, // Set the desired background color
+            // ),
             child: ListView(
               children: [
                 SizedBox(
@@ -107,6 +105,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                 ),
                 ListTile(
+                  tileColor: _currentIndex == 0 ? kPrimaryLightColor : null,
                   leading: const Icon(Icons.device_hub),
                   title: const Text('Devices'),
                   onTap: () {
@@ -114,9 +113,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     Navigator.of(context).pop(); // Close the drawer
                   },
                 ),
-                if (Responsive.isMobile(context) ||
-                    Responsive.isTablet(context))
+                if (!kIsWeb ||
+                    (!Responsive.isDesktop(context) &&
+                        !Responsive.isMobile(context) &&
+                        !Responsive.isTablet(context)))
                   ListTile(
+                    tileColor: _currentIndex == 1 ? kPrimaryLightColor : null,
                     leading: const Icon(Icons.map),
                     title: const Text('Maps'),
                     onTap: () {
@@ -124,48 +126,70 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       Navigator.of(context).pop(); // Close the drawer
                     },
                   ),
-                if (_userRole == 'admin' && Responsive.isDesktop(context) ||
-                    Responsive.isTablet(context))
+                if (!kIsWeb &&
+                    _userRole == 'admin' &&
+                    !Responsive.isDesktop(context) &&
+                    !Responsive.isTablet(context) &&
+                    !Responsive.isMobile(context))
                   ListTile(
+                    tileColor: _currentIndex == 2 ? kPrimaryLightColor : null,
                     leading: const Icon(Icons.history),
                     title: const Text('History'),
                     onTap: () {
-                      if (Responsive.isDesktop(context)) {
-                        _onNavigationItemTapped(1);
-                        Navigator.of(context).pop(); // Close the drawer
-                      } else {
-                        _onNavigationItemTapped(2);
-                        Navigator.of(context).pop(); // Close the drawer
-                      }
+                      _onNavigationItemTapped(2);
+                      Navigator.of(context).pop(); // Close the drawer
                     },
                   ),
-                if (_userRole == 'admin')
+                if (!kIsWeb && _userRole == 'admin')
                   ListTile(
+                    tileColor: _currentIndex == 3 ? kPrimaryLightColor : null,
                     leading: const Icon(Icons.people),
                     title: const Text('Users'),
                     onTap: () {
-                      if (Responsive.isDesktop(context)) {
-                        _onNavigationItemTapped(2);
-                        Navigator.of(context).pop(); // Close the drawer
-                      } else {
-                        _onNavigationItemTapped(3);
-                        Navigator.of(context).pop(); // Close the drawer
-                      }
-                    },
-                  ),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: const Text('Setting'),
-                  onTap: () {
-                    if (Responsive.isDesktop(context)) {
                       _onNavigationItemTapped(3);
                       Navigator.of(context).pop(); // Close the drawer
-                    } else {
+                    },
+                  ),
+                if (!kIsWeb && _userRole == 'admin')
+                  ListTile(
+                    tileColor: _currentIndex == 4 ? kPrimaryLightColor : null,
+                    leading: const Icon(Icons.settings),
+                    title: const Text('Setting'),
+                    onTap: () {
                       _onNavigationItemTapped(4);
                       Navigator.of(context).pop(); // Close the drawer
-                    }
-                  },
-                ),
+                    },
+                  ),
+                if (kIsWeb && _userRole == 'admin' && !Responsive.isMobile(context))
+                  ListTile(
+                    tileColor: _currentIndex == 1 ? kPrimaryLightColor : null,
+                    leading: const Icon(Icons.history),
+                    title: const Text('History'),
+                    onTap: () {
+                      _onNavigationItemTapped(1);
+                      Navigator.of(context).pop(); // Close the drawer
+                    },
+                  ),
+                if (kIsWeb && _userRole == 'admin')
+                  ListTile(
+                    tileColor: _currentIndex == 2 ? kPrimaryLightColor : null,
+                    leading: const Icon(Icons.people),
+                    title: const Text('Users'),
+                    onTap: () {
+                      _onNavigationItemTapped(2);
+                      Navigator.of(context).pop(); // Close the drawer
+                    },
+                  ),
+                if (kIsWeb)
+                  ListTile(
+                    tileColor: _currentIndex == 3 ? kPrimaryLightColor : null,
+                    leading: const Icon(Icons.settings),
+                    title: const Text('Setting'),
+                    onTap: () {
+                      _onNavigationItemTapped(3);
+                      Navigator.of(context).pop(); // Close the drawer
+                    },
+                  ),
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text('Logout'),
