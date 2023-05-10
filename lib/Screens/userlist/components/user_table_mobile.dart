@@ -190,6 +190,12 @@ class _UserMobileScreenState extends State<UserMobileScreen> {
                                               ),
                                               actions: [
                                                 TextButton(
+                                                  style: ButtonStyle(
+                                                    foregroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(
+                                                                Colors.red),
+                                                  ),
                                                   child: const Text('Cancel'),
                                                   onPressed: () {
                                                     Navigator.of(context).pop();
@@ -197,11 +203,21 @@ class _UserMobileScreenState extends State<UserMobileScreen> {
                                                   },
                                                 ),
                                                 TextButton(
-                                                  child: const Text('Unlock'),
                                                   onPressed: () {
                                                     _unlockUser(
                                                         users[index].id);
                                                   },
+                                                  style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(Colors
+                                                                .deepPurpleAccent),
+                                                    foregroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(
+                                                                Colors.white),
+                                                  ),
+                                                  child: const Text('Unlock'),
                                                 ),
                                               ],
                                             );

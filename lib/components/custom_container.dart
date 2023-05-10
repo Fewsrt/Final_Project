@@ -127,10 +127,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     },
                   ),
                 if (!kIsWeb &&
-                    _userRole == 'admin' &&
-                    !Responsive.isDesktop(context) &&
-                    !Responsive.isTablet(context) &&
-                    !Responsive.isMobile(context))
+                    _userRole == 'admin' && !Responsive.isMobile(context))
                   ListTile(
                     tileColor: _currentIndex == 2 ? kPrimaryLightColor : null,
                     leading: const Icon(Icons.history),
