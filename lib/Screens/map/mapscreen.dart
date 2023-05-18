@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -17,6 +18,11 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   final Completer<GoogleMapController> _controller = Completer();
   final Set<Marker> _markers = {};
+  DatabaseReference ref = FirebaseDatabase.instance.ref('/');
+  StreamSubscription<DatabaseEvent>? _statusSubscription;
+  String _status = '';
+  Map<String, dynamic> statusData = {};
+  bool _isDisposed = false;
 
   LatLng? _center;
 
@@ -33,6 +39,13 @@ class _MapScreenState extends State<MapScreen> {
         builder: (context) => AdminDashboardPage(deviceId: deviceId),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _statusSubscription?.cancel();
+    _isDisposed = true;
+    super.dispose();
   }
 
   void _getCurrentLocation() async {
@@ -57,38 +70,43 @@ class _MapScreenState extends State<MapScreen> {
         .listen((QuerySnapshot querySnapshot) {
       querySnapshot.docChanges.forEach((docChange) {
         String deviceId = docChange.doc.id;
+        String uuid = docChange.doc.get('uuid');
         double lat = docChange.doc['lat'];
         double long = docChange.doc['long'];
-        String status = docChange
-            .doc['Status']; // Assuming 'status' field exists in Firestore
+        ref.child(uuid).child('Status').onValue.listen((event) {
+          dynamic statusValue = event.snapshot.value;
+          if (statusValue != null && statusValue is String) {
+            String status = statusValue;
+            bool isOffline = status == 'Offline';
 
-        bool isOffline = status == 'Offline';
+            BitmapDescriptor markerIcon = isOffline
+                ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)
+                : BitmapDescriptor.defaultMarkerWithHue(
+                    BitmapDescriptor.hueGreen);
 
-        BitmapDescriptor markerIcon = isOffline
-            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed)
-            : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+            Marker marker = Marker(
+              markerId: MarkerId(deviceId),
+              position: LatLng(lat, long),
+              icon: markerIcon,
+              infoWindow: InfoWindow(
+                title: docChange.doc['device_name'],
+                snippet: isOffline ? 'Offline' : 'Tap to View more',
+                onTap: isOffline ? null : () => _onMarkerTapped(deviceId),
+              ),
+            );
 
-        Marker marker = Marker(
-          markerId: MarkerId(deviceId),
-          position: LatLng(lat, long),
-          icon: markerIcon,
-          infoWindow: InfoWindow(
-            title: docChange.doc['device_name'],
-            snippet: isOffline ? 'Offline' : 'Tap to View more',
-            onTap: isOffline ? null : () => _onMarkerTapped(deviceId),
-          ),
-        );
-
-        setState(() {
-          if (docChange.type == DocumentChangeType.added) {
-            _markers.add(marker);
-          } else if (docChange.type == DocumentChangeType.modified) {
-            _markers.removeWhere((existingMarker) =>
-                existingMarker.markerId == MarkerId(deviceId));
-            _markers.add(marker);
-          } else if (docChange.type == DocumentChangeType.removed) {
-            _markers.removeWhere((existingMarker) =>
-                existingMarker.markerId == MarkerId(deviceId));
+            setState(() {
+              if (docChange.type == DocumentChangeType.added) {
+                _markers.add(marker);
+              } else if (docChange.type == DocumentChangeType.modified) {
+                _markers.removeWhere((existingMarker) =>
+                    existingMarker.markerId == MarkerId(deviceId));
+                _markers.add(marker);
+              } else if (docChange.type == DocumentChangeType.removed) {
+                _markers.removeWhere((existingMarker) =>
+                    existingMarker.markerId == MarkerId(deviceId));
+              }
+            });
           }
         });
       });

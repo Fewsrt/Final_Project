@@ -7,6 +7,7 @@ import 'package:alert/controllers/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class AddDevicePage extends StatefulWidget {
   const AddDevicePage({Key? key}) : super(key: key);
@@ -26,9 +27,11 @@ class _AddDevicePageState extends State<AddDevicePage> {
   QRViewController? _controller;
   double? latitude;
   double? longitude;
+  DatabaseReference refalertsensor = FirebaseDatabase.instance.ref("/");
 
   void _addDevice() async {
     final currentTime = DateTime.now();
+    final uuid = _serialNumberController.text;
     try {
       // Create a new device document in Firestore
       await FirebaseFirestore.instance.collection('Devices').add({
@@ -37,7 +40,19 @@ class _AddDevicePageState extends State<AddDevicePage> {
         'uuid': _serialNumberController.text,
         'lat': latitude,
         'long': longitude,
-        'created_at': currentTime.toIso8601String(),
+        'created_at': currentTime,
+      });
+
+      await refalertsensor.child('/$uuid/Settings').set({
+        'temperature': 0,
+        'RainGuage': 0,
+        'WindSpeed': 0,
+        'pumpwt': 0,
+        'drainwt': 0,
+        'drainwt2': 0,
+        'drainbwt': 0,
+        'pumpbwt': 0,
+        'drainwt3': 0,
       });
 
       // Navigate back to the previous Page

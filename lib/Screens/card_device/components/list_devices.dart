@@ -463,12 +463,33 @@ class RowSource extends DataTableSource {
     }
   }
 
-  Future<void> _deleteDevice(String deviceId) async {
-    await FirebaseFirestore.instance
-        .collection('Devices')
-        .doc(deviceId)
-        .delete();
+Future<void> _deleteDevice(String deviceId) async {
+  // Get a reference to the Firebase Realtime Database.
+  DatabaseReference ref = FirebaseDatabase.instance.ref('/');
+
+  // Get a reference to the document in Firestore.
+  DocumentReference docRef = FirebaseFirestore.instance.collection('Devices').doc(deviceId);
+  
+  // Fetch the document to get the uuid.
+  DocumentSnapshot doc = await docRef.get();
+  
+  if (!doc.exists) {
+    throw Exception('Device not found');
   }
+
+  // Get the uuid from the document.
+  String uuid = doc.get('uuid');
+  
+  // Get a reference to the child node in Firebase Realtime Database.
+  DatabaseReference deleteRef = ref.child(uuid);
+
+  // Delete the document in Firestore.
+  await docRef.delete();
+  
+  // Remove the child node in Firebase Realtime Database.
+  await deleteRef.remove();
+}
+
 
   Future<void> _showConfirmationDialog(
       BuildContext context, String deviceId, String deviceName) async {

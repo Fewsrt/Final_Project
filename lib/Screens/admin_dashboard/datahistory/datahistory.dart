@@ -59,7 +59,7 @@ class _DataHistoryPageState extends State<DataHistoryPage> {
 
     for (var i = 0; i < documents.length; i++) {
       final Map<String, dynamic> documentData = documents[i].data();
-      final createdAt = documentData['createdAt']
+      final createdAt = documentData['created_at']
           ?.toDate(); // Assuming 'createdAt' is a DateTime object
 
       final dateFormatter = DateFormat('yyyy-MM-dd HH:mm:ss');

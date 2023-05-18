@@ -24,7 +24,7 @@ void exportToCSV(List<Map<String, dynamic>> data) {
   // Add data rows
   data.forEach((row) {
     rows.add([
-      row['createdAt']?.toDate()?.toString() ?? '-',
+      row['created_at']?.toDate()?.toString() ?? '-',
       row['uuid']?.toString() ?? '-',
       row['direction']?.toString() ?? '-',
       row['humidity']?.toString() ?? '-',

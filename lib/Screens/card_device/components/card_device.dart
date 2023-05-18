@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class CardDevicePage extends StatefulWidget {
   const CardDevicePage({super.key});
@@ -24,6 +25,8 @@ class _CardDeviceState extends State<CardDevicePage> {
   String _status = '';
   Map<String, dynamic> statusData = {};
   bool _isDisposed = false;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -139,9 +142,10 @@ class _CardDeviceState extends State<CardDevicePage> {
                           return const SizedBox.shrink();
                         }
 
-                        final String status =
-                            snapshot.data!.snapshot.value as String;
-                        isOnline = (status == 'Online');
+                        final String? status =
+                            snapshot.data!.snapshot.value as String?;
+                        final String statusValue = status ?? 'Offline';
+                        isOnline = (statusValue == 'Online');
                         iconData = isOnline
                             ? Icons.cloud_outlined
                             : Icons.cloud_off_outlined;
@@ -167,7 +171,9 @@ class _CardDeviceState extends State<CardDevicePage> {
 
                     final String? status =
                         snapshot.data!.snapshot.value as String?;
-                    isOnline = (status == 'Online');
+                    final String statusValue = status ?? 'Offline';
+
+                    isOnline = (statusValue == 'Online');
                     final Color backgroundColor =
                         isOnline ? Colors.green : Colors.grey;
 
@@ -180,7 +186,7 @@ class _CardDeviceState extends State<CardDevicePage> {
                       ),
                       child: Center(
                         child: Text(
-                          status!,
+                          statusValue,
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
