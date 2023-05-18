@@ -18,8 +18,12 @@ class DeviceSettingsPage extends StatefulWidget {
 }
 
 class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
-  final TextEditingController _villageSensor = TextEditingController();
-  final TextEditingController _riverSensor = TextEditingController();
+  final TextEditingController _pumpwt = TextEditingController();
+  final TextEditingController _drainwt = TextEditingController();
+  final TextEditingController _drainwt2 = TextEditingController();
+  final TextEditingController _pumpbwt = TextEditingController();
+  final TextEditingController _drainbwt = TextEditingController();
+  final TextEditingController _drainwt3 = TextEditingController();
   final TextEditingController _rain = TextEditingController();
   final TextEditingController _windSpeed = TextEditingController();
   final TextEditingController _temperature = TextEditingController();
@@ -29,8 +33,14 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
   double? _temperaturedata;
   double? _raindata;
   double? _windSpeeddata;
-  double? _villageSensordata;
-  double? _riverSensordata;
+  // double? _pumpwtdata;
+  // double? _drainwtdata;
+  double? _pumpwtdata;
+  double? _drainwtdata;
+  double? _drainwt2data;
+  double? _pumpbwtdata;
+  double? _drainbwtdata;
+  double? _drainwt3data;
 
   CollectionReference devicesCollection =
       FirebaseFirestore.instance.collection('Devices');
@@ -71,29 +81,41 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
         setState(() {
           // Update the state of the buttons based on the new values in the database
           _raindata =
-              (event.snapshot.child("RainGuage").value as num?)?.toDouble();
-          _villageSensordata =
-              (event.snapshot.child("VillageSensor").value as num?)?.toDouble();
-          _riverSensordata =
-              (event.snapshot.child("RiverSensor").value as num?)?.toDouble();
+              (event.snapshot.child("RainGuage").value as num?)?.toDouble() ?? 0.0;
           _windSpeeddata =
-              (event.snapshot.child("WindSpeed").value as num?)?.toDouble();
+              (event.snapshot.child("WindSpeed").value as num?)?.toDouble() ?? 0.0;
           _temperaturedata =
-              (event.snapshot.child("temperature").value as num?)?.toDouble();
+              (event.snapshot.child("temperature").value as num?)?.toDouble() ?? 0.0;
+          _pumpwtdata =
+              (event.snapshot.child("pumpwt").value as num?)?.toDouble();
+          _drainwtdata =
+              (event.snapshot.child("drainwt").value as num?)?.toDouble();
+          _drainwt2data =
+              (event.snapshot.child("drainwt2").value as num?)?.toDouble();
+          _pumpbwtdata =
+              (event.snapshot.child("pumpbwt").value as num?)?.toDouble();
+          _drainbwtdata =
+              (event.snapshot.child("drainbwt").value as num?)?.toDouble();
+          _drainwt3data =
+              (event.snapshot.child("drainwt3").value as num?)?.toDouble();
         });
-        _riverSensor.text = _riverSensordata.toString();
-        _villageSensor.text = _villageSensordata.toString();
         _rain.text = _raindata.toString();
         _windSpeed.text = _windSpeeddata.toString();
         _temperature.text = _temperaturedata.toString();
+        _pumpwt.text = _pumpwtdata.toString();
+        _drainwt.text = _drainwtdata.toString();
+        _drainwt2.text = _drainwt2data.toString();
+        _pumpbwt.text = _pumpbwtdata.toString();
+        _drainbwt.text = _drainbwtdata.toString();
+        _drainwt3.text = _drainwt3data.toString();
       });
     }
   }
 
   @override
   void dispose() {
-    _villageSensor.dispose();
-    _riverSensor.dispose();
+    _pumpwt.dispose();
+    _drainwt.dispose();
     _rain.dispose();
     _windSpeed.dispose();
     _temperature.dispose();
@@ -154,16 +176,44 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
-                    controller: _villageSensor,
+                    controller: _pumpwt,
                     decoration: const InputDecoration(
-                      labelText: 'villageSensor',
+                      labelText: 'pumpwt',
                     ),
                   ),
                   const SizedBox(height: 16.0),
                   TextFormField(
-                    controller: _riverSensor,
+                    controller: _drainwt,
                     decoration: const InputDecoration(
-                      labelText: 'riverSensor',
+                      labelText: 'drainwt',
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _drainwt2,
+                    decoration: const InputDecoration(
+                      labelText: 'drainwt2',
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _pumpbwt,
+                    decoration: const InputDecoration(
+                      labelText: 'pumpbwt',
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _drainbwt,
+                    decoration: const InputDecoration(
+                      labelText: 'drainbwt',
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: _drainwt3,
+                    decoration: const InputDecoration(
+                      labelText: 'drainwt3',
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -196,29 +246,39 @@ class _DeviceSettingsPageState extends State<DeviceSettingsPage> {
                       double temperature = double.parse(_temperature.text);
                       double rain = double.parse(_rain.text);
                       double windSpeed = double.parse(_windSpeed.text);
-                      double villageSensor = double.parse(_villageSensor.text);
-                      double riverSensor = double.parse(_riverSensor.text);
+                      double pumpwt = double.parse(_pumpwt.text);
+                      double drainwt = double.parse(_drainwt.text);
+                      double drainwt2 = double.parse(_drainwt2.text);
+                      double pumpbwt = double.parse(_pumpbwt.text);
+                      double drainbwt = double.parse(_drainbwt.text);
+                      double drainwt3 = double.parse(_drainwt3.text);
 
                       // Save the data to Firestore
-                      await FirebaseFirestore.instance
-                          .collection('Devices')
-                          .doc(widget.uuid)
-                          .collection('SettingSensor')
-                          .doc('data')
-                          .update({
-                        'temperature': temperature,
-                        'rainGuage': rain,
-                        'windSpeed': windSpeed,
-                        'villageSensor': villageSensor,
-                        'riverSensor': riverSensor,
-                      });
+                      // await FirebaseFirestore.instance
+                      //     .collection('Devices')
+                      //     .doc(widget.uuid)
+                      //     .set({
+                      //   'temperature': temperature,
+                      //   'rainGuage': rain,
+                      //   'windSpeed': windSpeed,
+                      //   'pumpwt': pumpwt,
+                      //   'drainwt': drainwt,
+                      //   'drainwt2': drainwt2,
+                      //   'drainbwt': drainbwt,
+                      //   'pumpbwt': pumpbwt,
+                      //   'drainwt3': drainwt3,
+                      // });
 
-                      await refalertsensor.child('/$deviceuuid/Settings').update({
+                      await refalertsensor.child('/$deviceuuid/Settings').set({
                         'temperature': temperature,
                         'RainGuage': rain,
                         'WindSpeed': windSpeed,
-                        'VillageSensor': villageSensor,
-                        'RiverSensor': riverSensor,
+                        'pumpwt': pumpwt,
+                        'drainwt': drainwt,
+                        'drainwt2': drainwt2,
+                        'drainbwt': drainbwt,
+                        'pumpbwt': pumpbwt,
+                        'drainwt3': drainwt3,
                       });
 
                       Navigator.pop(context);

@@ -12,6 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:alert/Screens/admin_dashboard/admin_dashboard.dart';
 import 'package:alert/Screens/add_device/add_device.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class ListDevicePage extends StatefulWidget {
   const ListDevicePage({Key? key}) : super(key: key);
@@ -28,6 +29,64 @@ class _ListDevicePageState extends State<ListDevicePage> {
   List<Device> _filteredData = [];
   StreamSubscription<QuerySnapshot>? _devicesSubscription;
 
+  DatabaseReference ref = FirebaseDatabase.instance.ref('/');
+  StreamSubscription<DatabaseEvent>? _statusSubscription;
+  String _status = '';
+  Map<String, dynamic> statusrealtime = {};
+  bool _isDisposed = false;
+
+  Future<void> _loadDeviceStatuses() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('Devices').get();
+    for (var doc in snapshot.docs) {
+      getStatusData(doc);
+    }
+  }
+
+  Future<void> getStatusData(DocumentSnapshot doc) async {
+    final String uuid = doc.get('uuid');
+    _statusSubscription =
+        ref.child("/$uuid/Status").onValue.listen((event) async {
+      _status = event.snapshot.value as String;
+      if (!_isDisposed) {
+        setState(() {
+          statusrealtime[uuid] = _status;
+          // print(statusData);
+        });
+      }
+    });
+  }
+
+  Future<void> _listenToDeviceStatus() async {
+    final firestore = FirebaseFirestore.instance;
+
+    _devicesSubscription?.cancel();
+    _devicesSubscription = _deviceStream().listen((devicesSnapshot) {
+      final devicesDocs = devicesSnapshot.docs;
+      setState(() {
+        _allData = devicesDocs.map((doc) => Device.fromFirestore(doc)).toList();
+        _filteredData = _allData;
+      });
+
+      // Listen for real-time status updates
+      for (var doc in devicesDocs) {
+        final String uuid = doc.get('uuid');
+        final DatabaseReference deviceStatusRef =
+            FirebaseDatabase.instance.ref('/$uuid/Status');
+
+        deviceStatusRef.onValue.listen((event) {
+          final status = event.snapshot.value as String?;
+
+          if (!_isDisposed) {
+            setState(() {
+              statusrealtime[uuid] = status;
+            });
+          }
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     _devicesSubscription = _deviceStream().listen((devicesSnapshot) {
@@ -37,13 +96,20 @@ class _ListDevicePageState extends State<ListDevicePage> {
         _filteredData = _allData;
       });
     });
-    _loadUserRole();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadUserRole();
+      _listenToDeviceStatus();
+    });
+
     super.initState();
   }
 
   @override
   void dispose() {
     _devicesSubscription?.cancel();
+    _statusSubscription?.cancel();
+    _isDisposed = true;
     super.dispose();
   }
 
@@ -138,6 +204,7 @@ class _ListDevicePageState extends State<ListDevicePage> {
                           context: context,
                           myData: _filteredData,
                           count: _filteredData.length,
+                          statusData: statusrealtime,
                         ),
                         rowsPerPage: rowsPerPage,
                         columnSpacing: 8,
@@ -292,11 +359,13 @@ class RowSource extends DataTableSource {
   final int count;
   late FirebaseAuth _auth;
   late User user;
+  final Map<String, dynamic> statusData;
 
   RowSource({
     required this.context,
     required this.myData,
     required this.count,
+    required this.statusData,
   }) {
     _auth = FirebaseAuth.instance;
     user = _auth.currentUser!;
@@ -306,9 +375,10 @@ class RowSource extends DataTableSource {
   DataRow? getRow(int index) {
     if (index < rowCount) {
       final device = myData[index];
-      final isOnline = device.status == 'Online';
-      final statusColor = isOnline ? Colors.green : Colors.red;
+      final String status = (statusData[device.uuid] ?? 'Offline') as String;
+      final bool isOnline = (status == 'Online');
       final statusText = isOnline ? 'Online' : 'Offline';
+      final statusColor = isOnline ? Colors.green : Colors.red;
       return DataRow(
         cells: [
           DataCell(

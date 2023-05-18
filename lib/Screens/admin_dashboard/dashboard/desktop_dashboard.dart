@@ -19,7 +19,7 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
   bool _pumpright = false;
   bool _door1 = false;
   bool _door2 = false;
-  int _direction = 0;
+  String _direction = '';
   int _ultrasonicleft = 0;
   int _ultrasonicright = 0;
   double _humidity = 0;
@@ -103,7 +103,7 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
           _ultrasonicright =
               (event.snapshot.child("RiverSensor").value as num?)?.toInt() ?? 0;
           _direction =
-              (event.snapshot.child("Direction").value as num?)?.toInt() ?? 0;
+              (event.snapshot.child("Direction").value as String);
           _humidity =
               (event.snapshot.child("Humidity").value as num?)?.toDouble() ??
                   0.0;
@@ -334,7 +334,7 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
                       child: ListTile(
                         leading: const Icon(Icons.compass_calibration),
                         title: const Text('Direction'),
-                        subtitle: Text('$_direction'),
+                        subtitle: Text(_direction),
                       ),
                     ),
                   ),

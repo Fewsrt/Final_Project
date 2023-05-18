@@ -37,7 +37,6 @@ class _AddDevicePageState extends State<AddDevicePage> {
         'uuid': _serialNumberController.text,
         'lat': latitude,
         'long': longitude,
-        'Status': 'Offline',
         'created_at': currentTime.toIso8601String(),
       });
 

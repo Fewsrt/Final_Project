@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:alert/Screens/add_device/add_device.dart';
 import 'package:alert/Screens/admin_dashboard/admin_dashboard.dart';
 import 'package:alert/controllers/constants.dart';
 import 'package:alert/controllers/responsive.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,11 +19,23 @@ class CardDevicePage extends StatefulWidget {
 
 class _CardDeviceState extends State<CardDevicePage> {
   String _userRole = '';
+  DatabaseReference ref = FirebaseDatabase.instance.ref('/');
+  StreamSubscription<DatabaseEvent>? _statusSubscription;
+  String _status = '';
+  Map<String, dynamic> statusData = {};
+  bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
     _loadUserRole();
+  }
+
+  @override
+  void dispose() {
+    _statusSubscription?.cancel();
+    _isDisposed = true;
+    super.dispose();
   }
 
   Future<void> _loadUserRole() async {
@@ -45,13 +60,16 @@ class _CardDeviceState extends State<CardDevicePage> {
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
             return _buildCards(snapshot);
           },
         ),
       ),
-      floatingActionButton: (!kIsWeb || Responsive.isDesktop(context))
+      floatingActionButton: !(kIsWeb &&
+              (Responsive.isMobile(context) || Responsive.isTablet(context)))
           ? _buildFloatingActionButton()
           : null,
     );
@@ -76,11 +94,12 @@ class _CardDeviceState extends State<CardDevicePage> {
       itemBuilder: (BuildContext context, int index) {
         final DocumentSnapshot device = snapshot.data!.docs[index];
         final String deviceName = device.get('device_name');
-        final String status = device.get('Status');
-        final bool isOnline = (status == 'Online');
-        final IconData iconData =
-            isOnline ? Icons.cloud_outlined : Icons.cloud_off_outlined;
-        final Color iconColor = isOnline ? Colors.green : Colors.grey;
+        final String uuid = device.get('uuid');
+
+        bool isOnline = false;
+        IconData iconData =
+            Icons.cloud_off_outlined; // Declare the variable here
+
         return Card(
           clipBehavior: Clip.hardEdge,
           child: InkWell(
@@ -112,51 +131,66 @@ class _CardDeviceState extends State<CardDevicePage> {
                 ),
                 Expanded(
                   child: Center(
-                    child: Icon(
-                      iconData,
-                      size: 32,
-                      color: iconColor,
+                    child: StreamBuilder<DatabaseEvent>(
+                      stream: ref.child("/$uuid/Status").onValue,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<DatabaseEvent> snapshot) {
+                        if (snapshot.hasError || !snapshot.hasData) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final String status =
+                            snapshot.data!.snapshot.value as String;
+                        isOnline = (status == 'Online');
+                        iconData = isOnline
+                            ? Icons.cloud_outlined
+                            : Icons.cloud_off_outlined;
+                        final Color iconColor =
+                            isOnline ? Colors.green : Colors.grey;
+
+                        return Icon(
+                          iconData,
+                          size: 32,
+                          color: iconColor,
+                        );
+                      },
                     ),
                   ),
                 ),
-                if (isOnline)
-                  Container(
-                    padding: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(4.0),
-                      border: Border.all(color: Colors.green, width: 2.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        status,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                StreamBuilder<DatabaseEvent>(
+                  stream: ref.child("/$uuid/Status").onValue,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<DatabaseEvent> snapshot) {
+                    if (snapshot.hasError || !snapshot.hasData) {
+                      return const SizedBox.shrink();
+                    }
+
+                    final String? status =
+                        snapshot.data!.snapshot.value as String?;
+                    isOnline = (status == 'Online');
+                    final Color backgroundColor =
+                        isOnline ? Colors.green : Colors.grey;
+
+                    return Container(
+                      padding: const EdgeInsets.all(4.0),
+                      decoration: BoxDecoration(
+                        color: backgroundColor,
+                        borderRadius: BorderRadius.circular(4.0),
+                        border: Border.all(color: backgroundColor, width: 2.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          status!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                if (!isOnline)
-                  Container(
-                    padding: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(4.0),
-                      border: Border.all(color: Colors.grey, width: 2.0),
-                    ),
-                    child: Center(
-                      child: Text(
-                        status,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
+                    );
+                  },
+                ),
               ],
             ),
           ),

@@ -244,25 +244,7 @@ class _DesktopHistoryPageState extends State<DesktopHistoryPage> {
                 ),
                 const DataColumn(
                   label: Text(
-                    'Direction',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                const DataColumn(
-                  label: Text(
-                    'Humidity',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-                const DataColumn(
-                  label: Text(
-                    'Rain Gauge',
+                    'Village Sensor',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -289,7 +271,25 @@ class _DesktopHistoryPageState extends State<DesktopHistoryPage> {
                 ),
                 const DataColumn(
                   label: Text(
-                    'Village Sensor',
+                    'Humidity',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const DataColumn(
+                  label: Text(
+                    'Rain Gauge',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const DataColumn(
+                  label: Text(
+                    'Direction',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -354,12 +354,12 @@ DataRow recentFileDataRow(Map<String, dynamic> data) {
     cells: [
       DataCell(Text(formattedCreatedAt)),
       DataCell(Text(data['uuid']?.toString() ?? '-')),
-      DataCell(Text(data['direction']?.toString() ?? '-')),
-      DataCell(Text(data['humidity']?.toString() ?? '-')),
-      DataCell(Text(data['rainGuage']?.toString() ?? '-')),
+      DataCell(Text(data['villageSensor']?.toString() ?? '-')),
       DataCell(Text(data['riverSensor']?.toString() ?? '-')),
       DataCell(Text(data['temperature']?.toString() ?? '-')),
-      DataCell(Text(data['villageSensor']?.toString() ?? '-')),
+      DataCell(Text(data['humidity']?.toString() ?? '-')),
+      DataCell(Text(data['rainGuage']?.toString() ?? '-')),
+      DataCell(Text(data['direction']?.toString() ?? '-')),
       DataCell(Text(data['windSpeed']?.toString() ?? '-')),
     ],
   );
