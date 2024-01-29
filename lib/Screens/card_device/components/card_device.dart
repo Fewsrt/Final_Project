@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 
 import 'package:alert/Screens/add_device/add_device.dart';
@@ -22,7 +24,7 @@ class _CardDeviceState extends State<CardDevicePage> {
   String _userRole = '';
   DatabaseReference ref = FirebaseDatabase.instance.ref('/');
   StreamSubscription<DatabaseEvent>? _statusSubscription;
-  String _status = '';
+  final String _status = '';
   Map<String, dynamic> statusData = {};
   bool _isDisposed = false;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -231,7 +233,7 @@ class _CardDeviceState extends State<CardDevicePage> {
         } else {
           return const SizedBox.shrink();
         }
-      },
+      }, future: null,
     );
   }
 }

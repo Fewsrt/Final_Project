@@ -20,8 +20,10 @@ class _MapScreenState extends State<MapScreen> {
   final Set<Marker> _markers = {};
   DatabaseReference ref = FirebaseDatabase.instance.ref('/');
   StreamSubscription<DatabaseEvent>? _statusSubscription;
-  String _status = '';
+  // ignore: unused_field
+  final String _status = '';
   Map<String, dynamic> statusData = {};
+  // ignore: unused_field
   bool _isDisposed = false;
 
   LatLng? _center;

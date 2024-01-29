@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_element, unused_local_variable
 
 import 'dart:async';
 
@@ -210,8 +210,8 @@ class _ListDevicePageState extends State<ListDevicePage> {
                         columnSpacing: 8,
                         columns: [
                           DataColumn(
-                            label: Row(
-                              children: const [
+                            label: const Row(
+                              children: [
                                 Text(
                                   'Device Name',
                                   style: TextStyle(
@@ -240,8 +240,8 @@ class _ListDevicePageState extends State<ListDevicePage> {
                             ),
                           ),
                           DataColumn(
-                            label: Row(
-                              children: const [
+                            label: const Row(
+                              children: [
                                 Text(
                                   'Status',
                                   style: TextStyle(
@@ -316,22 +316,22 @@ class _ListDevicePageState extends State<ListDevicePage> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     content: Responsive.isDesktop(context)
-                        ? SizedBox(
+                        ? const SizedBox(
                             width: 570, // set width here
                             height: 570, // set height here
                             child: Column(
-                              children: const [
+                              children: [
                                 Expanded(
                                   child: AddDeviceScreen(),
                                 ),
                               ],
                             ),
                           )
-                        : SizedBox(
+                        : const SizedBox(
                             width: 570, // set width here
                             height: 620, // set height here
                             child: Column(
-                              children: const [
+                              children: [
                                 Expanded(
                                   child: AddDeviceScreen(),
                                 ),
@@ -348,7 +348,7 @@ class _ListDevicePageState extends State<ListDevicePage> {
         } else {
           return const SizedBox.shrink();
         }
-      },
+      }, future: null,
     );
   }
 }

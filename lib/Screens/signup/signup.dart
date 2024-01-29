@@ -17,19 +17,19 @@ class SignUpScreen extends StatelessWidget {
           currentFocus.unfocus();
         }
       },
-      child: Background(
+      child: const Background(
         child: SingleChildScrollView(
           child: Responsive(
-            mobile: const MobileSignupScreen(),
+            mobile: MobileSignupScreen(),
             tablet: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: SignUpScreenTopImage(),
                 ),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       SizedBox(
                         width: 450,
                         child: SignUpForm(),
@@ -43,13 +43,13 @@ class SignUpScreen extends StatelessWidget {
             ),
             desktop: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: SignUpScreenTopImage(),
                 ),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       SizedBox(
                         width: 450,
                         child: SignUpForm(),
@@ -83,8 +83,8 @@ class MobileSignupScreen extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         // const SignUpScreenTopImage(),
-        Row(
-          children: const [
+        const Row(
+          children: [
             Spacer(),
             Expanded(
               flex: 8,

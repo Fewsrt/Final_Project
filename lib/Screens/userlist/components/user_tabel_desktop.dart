@@ -132,8 +132,8 @@ class _UserDesktopScreenState extends State<UserDesktopScreen> {
                         columnSpacing: 8,
                         columns: [
                           DataColumn(
-                            label: Row(
-                              children: const [
+                            label: const Row(
+                              children: [
                                 Text(
                                   'Name',
                                   style: TextStyle(
@@ -173,9 +173,9 @@ class _UserDesktopScreenState extends State<UserDesktopScreen> {
                               ),
                             ),
                           ),
-                          DataColumn(
+                          const DataColumn(
                             label: Row(
-                              children: const [
+                              children: [
                                 Text(
                                   'Role',
                                   style: TextStyle(

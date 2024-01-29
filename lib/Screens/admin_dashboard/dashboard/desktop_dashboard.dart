@@ -1,8 +1,11 @@
+// ignore_for_file: avoid_unnecessary_containers
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart' as fb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DesktopDashBoardPage extends StatefulWidget {
   final String deviceId;
@@ -43,6 +46,22 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
 
   StreamSubscription<fb.DatabaseEvent>? _buttonSubscription;
   StreamSubscription<fb.DatabaseEvent>? _sensorSubscription;
+
+  final List<SalesData> chartData = [
+    SalesData(DateTime(2023, 5, 11, 8, 40), 9),
+    SalesData(DateTime(2023, 5, 11, 9, 23), 2),
+    SalesData(DateTime(2023, 5, 11, 9, 38), 1),
+    SalesData(DateTime(2023, 5, 11, 9, 57), 1),
+    SalesData(DateTime(2023, 5, 11, 10, 32), 1),
+  ];
+
+  final List<SalesData> villageSensorData = [
+    SalesData(DateTime(2023, 5, 11, 8, 40), 4),
+    SalesData(DateTime(2023, 5, 11, 9, 23), 4),
+    SalesData(DateTime(2023, 5, 11, 9, 38), 6),
+    SalesData(DateTime(2023, 5, 11, 9, 57), 3),
+    SalesData(DateTime(2023, 5, 11, 10, 32), 1),
+  ];
 
   @override
   void initState() {
@@ -102,8 +121,7 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
                   0;
           _ultrasonicright =
               (event.snapshot.child("RiverSensor").value as num?)?.toInt() ?? 0;
-          _direction =
-              (event.snapshot.child("Direction").value as String);
+          _direction = (event.snapshot.child("Direction").value as String);
           _humidity =
               (event.snapshot.child("Humidity").value as num?)?.toDouble() ??
                   0.0;
@@ -235,126 +253,182 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16.0),
-            Row(
+            Column(
               children: [
-                Expanded(
-                  child: SizedBox(
-                    width: 200,
-                    height: 100,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      color: Colors.white,
-                      child: ListTile(
-                        leading: const Icon(Icons.water),
-                        title: const Text('VillageSensor'),
-                        subtitle: Text('$_ultrasonicleft cm'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          color: Colors.white,
+                          child: ListTile(
+                            leading: const Icon(Icons.water),
+                            title: const Text('VillageSensor'),
+                            subtitle: Text('$_ultrasonicleft cm'),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    Expanded(
+                      child: SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          color: Colors.white,
+                          child: ListTile(
+                            leading: const Icon(Icons.water),
+                            title: const Text('RiverSensor'),
+                            subtitle: Text('$_ultrasonicright cm'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          color: Colors.white,
+                          child: ListTile(
+                            leading: const Icon(Icons.thermostat),
+                            title: const Text('Temperature'),
+                            subtitle: Text('$_temperature °C'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          color: Colors.white,
+                          child: ListTile(
+                            leading: const Icon(Icons.opacity),
+                            title: const Text('Humidity'),
+                            subtitle: Text('$_humidity %'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          color: Colors.white,
+                          child: ListTile(
+                            leading: const Icon(Icons.beach_access),
+                            title: const Text('Rain'),
+                            subtitle: Text('$_rain mm'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          color: Colors.white,
+                          child: ListTile(
+                            leading: const Icon(Icons.compass_calibration),
+                            title: const Text('Direction'),
+                            subtitle: Text(_direction),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          color: Colors.white,
+                          child: ListTile(
+                            leading: const Icon(Icons.speed),
+                            title: const Text('Wind Speed'),
+                            subtitle: Text('$_windspeed m/s'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: SizedBox(
-                    width: 200,
-                    height: 100,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      color: Colors.white,
-                      child: ListTile(
-                        leading: const Icon(Icons.water),
-                        title: const Text('RiverSensor'),
-                        subtitle: Text('$_ultrasonicright cm'),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    width: 200,
-                    height: 100,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      color: Colors.white,
-                      child: ListTile(
-                        leading: const Icon(Icons.thermostat),
-                        title: const Text('Temperature'),
-                        subtitle: Text('$_temperature °C'),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        child: SfCartesianChart(
+                          title: ChartTitle(
+                            text: 'VillageSensor Data',
+                          ),
+                          primaryXAxis: DateTimeAxis(
+                          ),
+                          series: <ChartSeries>[
+                            LineSeries<SalesData, DateTime>(
+                                dataSource: chartData,
+                                xValueMapper: (SalesData sales, _) =>
+                                    sales.year,
+                                yValueMapper: (SalesData sales, _) =>
+                                    sales.sales,
+                                dataLabelSettings: const DataLabelSettings(
+                                    // Renders the data label
+                                    isVisible: true),
+                                markerSettings:
+                                    const MarkerSettings(isVisible: true)),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    width: 200,
-                    height: 100,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                    Expanded(
+                      child: Container(
+                        child: SfCartesianChart(
+                          title: ChartTitle(
+                            text: 'RiverSensor Data',
+                          ),
+                          primaryXAxis: DateTimeAxis(),
+                          series: <ChartSeries>[
+                            LineSeries<SalesData, DateTime>(
+                                dataSource: villageSensorData,
+                                xValueMapper: (SalesData sales, _) =>
+                                    sales.year,
+                                yValueMapper: (SalesData sales, _) =>
+                                    sales.sales,
+                                dataLabelSettings: const DataLabelSettings(
+                                    // Renders the data label
+                                    isVisible: true),
+                                markerSettings:
+                                    const MarkerSettings(isVisible: true)),
+                          ],
+                        ),
                       ),
-                      color: Colors.white,
-                      child: ListTile(
-                        leading: const Icon(Icons.opacity),
-                        title: const Text('Humidity'),
-                        subtitle: Text('$_humidity %'),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    width: 200,
-                    height: 100,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      color: Colors.white,
-                      child: ListTile(
-                        leading: const Icon(Icons.beach_access),
-                        title: const Text('Rain'),
-                        subtitle: Text('$_rain mm'),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    width: 200,
-                    height: 100,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      color: Colors.white,
-                      child: ListTile(
-                        leading: const Icon(Icons.compass_calibration),
-                        title: const Text('Direction'),
-                        subtitle: Text(_direction),
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    width: 200,
-                    height: 100,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      color: Colors.white,
-                      child: ListTile(
-                        leading: const Icon(Icons.speed),
-                        title: const Text('Wind Speed'),
-                        subtitle: Text('$_windspeed m/s'),
-                      ),
-                    ),
-                  ),
+                    )
+                  ],
                 ),
               ],
             ),
@@ -467,4 +541,10 @@ class _DesktopDashBoardPageState extends State<DesktopDashBoardPage> {
       ),
     );
   }
+}
+
+class SalesData {
+  SalesData(this.year, this.sales);
+  final DateTime year;
+  final double sales;
 }

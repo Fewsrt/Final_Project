@@ -45,9 +45,9 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         children: [
           Container(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Select Location',
                   style: TextStyle(

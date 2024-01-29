@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart' as fb;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class DashBoardPage extends StatefulWidget {
   final String deviceId;
@@ -43,6 +44,22 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
   StreamSubscription<fb.DatabaseEvent>? _buttonSubscription;
   StreamSubscription<fb.DatabaseEvent>? _sensorSubscription;
+
+  final List<SalesData> chartData = [
+    SalesData(DateTime(2023, 5, 11, 8, 40), 9),
+    SalesData(DateTime(2023, 5, 11, 9, 23), 2),
+    SalesData(DateTime(2023, 5, 11, 9, 38), 1),
+    SalesData(DateTime(2023, 5, 11, 9, 57), 1),
+    SalesData(DateTime(2023, 5, 11, 10, 32), 1),
+  ];
+
+  final List<SalesData> villageSensorData = [
+    SalesData(DateTime(2023, 5, 11, 8, 40), 4),
+    SalesData(DateTime(2023, 5, 11, 9, 23), 4),
+    SalesData(DateTime(2023, 5, 11, 9, 38), 6),
+    SalesData(DateTime(2023, 5, 11, 9, 57), 3),
+    SalesData(DateTime(2023, 5, 11, 10, 32), 1),
+  ];
 
   @override
   void initState() {
@@ -102,8 +119,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   0;
           _ultrasonicright =
               (event.snapshot.child("RiverSensor").value as num?)?.toInt() ?? 0;
-          _direction =
-              (event.snapshot.child("Direction").value as String);
+          _direction = (event.snapshot.child("Direction").value as String);
           _humidity =
               (event.snapshot.child("Humidity").value as num?)?.toDouble() ??
                   0.0;
@@ -344,6 +360,44 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       ),
                     ),
                     const SizedBox(height: 16.0),
+                    SizedBox(
+                      child: SfCartesianChart(
+                        title: ChartTitle(
+                          text: 'VillageSensor Data',
+                        ),
+                        primaryXAxis: DateTimeAxis(),
+                        series: <ChartSeries>[
+                          LineSeries<SalesData, DateTime>(
+                              dataSource: chartData,
+                              xValueMapper: (SalesData sales, _) => sales.year,
+                              yValueMapper: (SalesData sales, _) => sales.sales,
+                              dataLabelSettings: const DataLabelSettings(
+                                  // Renders the data label
+                                  isVisible: true),
+                              markerSettings:
+                                  const MarkerSettings(isVisible: true)),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      child: SfCartesianChart(
+                        title: ChartTitle(
+                          text: 'RiverSensor Data',
+                        ),
+                        primaryXAxis: DateTimeAxis(),
+                        series: <ChartSeries>[
+                          LineSeries<SalesData, DateTime>(
+                              dataSource: villageSensorData,
+                              xValueMapper: (SalesData sales, _) => sales.year,
+                              yValueMapper: (SalesData sales, _) => sales.sales,
+                              dataLabelSettings: const DataLabelSettings(
+                                  // Renders the data label
+                                  isVisible: true),
+                              markerSettings:
+                                  const MarkerSettings(isVisible: true)),
+                        ],
+                      ),
+                    ),
                     if (_userRole == 'admin')
                       const Text(
                         'Control:',
@@ -436,7 +490,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 100)
+                    const SizedBox(height: 100)
                   ],
                 ),
               ),
@@ -478,4 +532,10 @@ class _DashBoardPageState extends State<DashBoardPage> {
       ),
     );
   }
+}
+
+class SalesData {
+  SalesData(this.year, this.sales);
+  final DateTime year;
+  final double sales;
 }
